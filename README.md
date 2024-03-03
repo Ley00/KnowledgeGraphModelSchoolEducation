@@ -1,5 +1,6 @@
 <h1 align="center">
   <br>
+    <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/30067a7d-c59b-4ccf-a40c-7323af97d71d" width="500">
   <br>
   Knowledge Graph Model School Education
 </h1>
