@@ -1,0 +1,11 @@
+# Crie um novo venv com o nome "venv"
+python -m venv venv
+
+# Ative o venv
+venv\Scripts\activate
+
+# Instale as bibliotecas necessárias
+pip install numpy pandas pip pyodbc sqlalchemy tzdata scikit-learn
+
+#Desativar o venv
+deactivate

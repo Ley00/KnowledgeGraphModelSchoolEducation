@@ -1,52 +1,57 @@
-import pandas as pd
 import csv
+from Preprocessing.Treatment.Average import averagetreatment
+from Preprocessing.Treatment.Payment import paymenttreatment
+import pandas as pd
 
-# Abrindo um arquivo CSV para escrita
-def savearchive(resultados):
+serie = "Série"
+media = "Média"
+
+def savearchiveaverage(results, namecsv):
     try:
-        with open('resultado_consulta.csv', 'w', newline='') as csvfile:
-            writer = csv.writer(csvfile, delimiter=',')
-            writer.writerow([
-                "Aluno", "Matrícula", "Situação da Matrícula", "Período Letivo", "Curso",
-                "Série", "Turma", "Disciplina", "Etapa", "Média"
-            ])
-            for resultado in resultados:
-                writer.writerow([resultado[0], resultado[1], resultado[2], resultado[3],
-                                 resultado[4], resultado[5], resultado[6], resultado[7],
-                                 resultado[8], (resultado[9])])
+        df = pd.DataFrame(results, columns=[
+            "Aluno", "Matrícula", "Situação da Matrícula", "Período Letivo", "Curso",
+                serie, "Turma", "Disciplina", "Etapa", media
+        ])
+        
+        df.to_csv(namecsv, index=False, encoding='utf-8')
+        print(f"Arquivo {namecsv} salvo com sucesso!")
+        
     except Exception as e:
         print(f"Erro ao escrever no arquivo CSV: {e}")
+    
+    averagetreatment(namecsv)
 
-    treatment()
+def savearchivepay(results, namecsv):
+    """
+    Salva os resultados da consulta em um arquivo CSV.
 
-def treatment():
+    Args:
+        results: Lista de tuplas contendo os dados da consulta.
+    """
+
     try:
-        # Leitura do arquivo CSV
-        df = pd.read_csv('resultado_consulta.csv', encoding='latin1')
+        # Criando o DataFrame
+        df = pd.DataFrame(results, columns=[
+            "Matrícula" ,"Aluno", "Situação da Matrícula", "Período Letivo", "Curso",
+            serie, "Turma", "Parcela Movimento", "Descrição Movimento", "Data Antecipado Movimento",
+            "Valor Antecipado Movimento", "Data Vencimento Movimento", "Valor Movimento",
+            "Pago Movimento"
+        ])
 
-        # Preenchimento de valores ausentes
-        df.fillna('N/A', inplace=True)
+        # Calculando a média para cada linha
+        df[media] = df[["Valor Antecipado Movimento", "Valor Movimento"]].mean(axis=1)
 
-        # Detecção e Imputação de Valores Anormais
-        df['Média'] = detect_and_impute_outliers(df['Média'], method='z-score')
+        # Arredondando a média para duas casas decimais
+        df[media] = df[media].round(2)
 
-        # Normalização de Dados
-        df['Média'] = normalize_data(df['Média'], method='min-max')
+        # Ordenando o DataFrame por curso, série, turma e aluno
+        df = df.sort_values(by=["Curso", "Série", "Turma", "Aluno"])
 
-        # Identificação de Outliers Multivariados
-        outliers = identify_multivariate_outliers(df, method='PCA')
-        df = df.drop(outliers)
-
-        # Enriquecimento de Dados
-        df = enrich_data(df, student_id='Aluno')
-
-        # Salvar dados pré-processados
-        df.to_csv('resultado_pre_processado.csv', index=False)
-
-        # Visualização de Dados
-        plot_distribution(df['Média'])
-        plot_correlation_matrix(df)
+        # Salvando o DataFrame em um arquivo CSV
+        df.to_csv(namecsv, index=False, encoding='utf-8')
+        print(f"Arquivo {namecsv} salvo com sucesso!")
 
     except Exception as e:
-        print(f"Erro durante o pré-processamento do arquivo CSV: {e}")
+        print(f"Erro ao salvar os dados no arquivo CSV: {e}")
         
+    paymenttreatment(namecsv)

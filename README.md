@@ -24,7 +24,7 @@ Libraries
 - <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/f6714fa0-da9c-4941-adc4-33e655aa9b9d" height="20"> **Pandas** - Pandas is a fast, powerful, flexible, and easy-to-use open-source data manipulation and analysis library built on top of Python.
 - <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/d3295ad3-5dbe-4dad-bb2b-6431c1beb8b7" height="20"> **SQLAlchemy** - SQLAlchemy is the Python SQL toolkit and Object-Relational Mapping (ORM) library.
 - <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/6248da89-8e9a-46e9-addb-5a9afc1574fa" height="20"> **Pyodbc** - PyODBC is an open-source Python module that makes accessing ODBC (Open Database Connectivity) databases simple.
-
+- <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/890e6505-a0fd-4c0f-bce1-bfe54c7aa962" height="20"> **Scikit-Learn** - It is an open-source machine learning library for the Python programming language. It includes various classification, regression, and clustering algorithms, including supporting vector machines, random forests, gradient boosting, k-means, and DBSCAN.
 ## Getting Started
 
 Follow these steps to set up the project on your local machine.
