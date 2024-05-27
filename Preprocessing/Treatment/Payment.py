@@ -6,7 +6,7 @@ vam = "Valor Antecipado Movimento"
 vm = "Valor Movimento"
 media = "Média"
 
-def paymenttreatment(namecsv):
+def paymenttreatment(foldercsv, namecsv):
   """
   Função que trata os dados de mensalidades escolares de um arquivo CSV.
 
@@ -18,7 +18,7 @@ def paymenttreatment(namecsv):
   """
 
   # Leitura do arquivo CSV
-  df = pd.read_csv(namecsv)
+  df = pd.read_csv(f"{foldercsv}/{namecsv}")
 
   # Conversão de colunas para tipos de dados adequados
   df[dvm] = pd.to_datetime(df[dvm])
@@ -46,4 +46,4 @@ def paymenttreatment(namecsv):
   # Impressão do DataFrame tratado
   print(df_grouped)
   
-  df_grouped.to_csv(namecsv, index=False)
+  df_grouped.to_csv(f"{foldercsv}/{namecsv}", index=False)

@@ -1,32 +1,45 @@
 import csv
-from Preprocessing.Treatment.Average import averagetreatment
-from Preprocessing.Treatment.Payment import paymenttreatment
 import pandas as pd
 
 serie = "Série"
 media = "Média"
 
-def savearchiveaverage(results, namecsv):
-    try:
-        df = pd.DataFrame(results, columns=[
-            "Aluno", "Matrícula", "Situação da Matrícula", "Período Letivo", "Curso",
-                serie, "Turma", "Disciplina", "Etapa", media
-        ])
-        
-        df.to_csv(namecsv, index=False, encoding='utf-8')
-        print(f"Arquivo {namecsv} salvo com sucesso!")
-        
-    except Exception as e:
-        print(f"Erro ao escrever no arquivo CSV: {e}")
-    
-    averagetreatment(namecsv)
+def savearchiveaverage(results, foldercsv, namecsv):
+  """
+  Função para salvar os resultados em um arquivo CSV na pasta "Result".
 
-def savearchivepay(results, namecsv):
+  Args:
+    results: Dicionário contendo os resultados a serem salvos.
+    namecsv: Nome do arquivo CSV (sem extensão).
+
+  Returns:
+    None
+  """
+
+  try:
+    # Criando o DataFrame com os resultados
+    df = pd.DataFrame(results, columns=[
+      "Aluno", "Matrícula", "Situação da Matrícula", "Período Letivo", "Curso",
+      serie, "Turma", "Disciplina", "Etapa", media
+    ])
+
+    # Salvando o DataFrame no arquivo CSV na pasta "Result"
+    df.to_csv(f"{foldercsv}/{namecsv}", index=False, encoding='utf-8')
+
+    # Imprimindo mensagem de sucesso
+    print(f"Arquivo {namecsv}.csv salvo com sucesso na pasta Result!")
+
+  except Exception as e:
+    # Imprimindo mensagem de erro
+    print(f"Erro ao escrever no arquivo CSV: {e}")
+
+def savearchivepay(results, foldercsv, namecsv):
     """
-    Salva os resultados da consulta em um arquivo CSV.
+    Salva os resultados da consulta em um arquivo CSV na pasta "Result".
 
     Args:
         results: Lista de tuplas contendo os dados da consulta.
+        namecsv: Nome do arquivo CSV (sem a extensão).
     """
 
     try:
@@ -44,14 +57,16 @@ def savearchivepay(results, namecsv):
         # Arredondando a média para duas casas decimais
         df[media] = df[media].round(2)
 
-        # Ordenando o DataFrame por curso, série, turma e aluno
-        df = df.sort_values(by=["Curso", "Série", "Turma", "Aluno"])
+        # Criando a pasta "Result" se não existir
+        import os
+        if not os.path.exists("Result"):
+            os.makedirs("Result")
 
-        # Salvando o DataFrame em um arquivo CSV
-        df.to_csv(namecsv, index=False, encoding='utf-8')
-        print(f"Arquivo {namecsv} salvo com sucesso!")
+        # Salvando o DataFrame em um arquivo CSV na pasta "Result"
+        df.to_csv(f"{foldercsv}/{namecsv}", index=False, encoding='utf-8')
+        
+        # Chamando a função `savearchivepay` (não modificada)
+        print(f"Arquivo {namecsv} salvo com sucesso na pasta Result!")
 
     except Exception as e:
         print(f"Erro ao salvar os dados no arquivo CSV: {e}")
-        
-    paymenttreatment(namecsv)

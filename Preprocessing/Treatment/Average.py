@@ -180,7 +180,7 @@ def plot_correlation_matrix(data):
      plt.title('Matriz de Correlação')
      plt.show()
 
-def averagetreatment(namecsv):
+def averagetreatment(foldercsv, namecsv):
     """
     Pre-processes and parses the data from the CSV file.
 
@@ -198,7 +198,7 @@ def averagetreatment(namecsv):
     
     try:
         # Leitura do arquivo CSV
-        df = pd.read_csv(namecsv, encoding='utf-8', decimal=',')
+        df = pd.read_csv(f"{foldercsv}/{namecsv}", encoding='utf-8', decimal=',')
 
         # Preenchimento de valores ausentes
         df.fillna('N/A', inplace=True)
@@ -210,17 +210,17 @@ def averagetreatment(namecsv):
         df[media] = normalize_data(df[media], method='min-max')
 
         # Aplicação da análise de PCA
-        df_pca = apply_pca(df)
+        # df_pca = apply_pca(df)
 
         # Identificação de Outliers Multivariados (se necessário)
-        outliers = identify_multivariate_outliers(df_pca, method='PCA')
-        df_pca = df_pca.drop(outliers)
+        # outliers = identify_multivariate_outliers(df_pca, method='PCA')
+        # df_pca = df_pca.drop(outliers)
 
         # Enriquecimento de Dados (se necessário)
         # df_enriched = enrich_data(df_pca, student_id='Aluno')
 
         # Salvar dados pré-processados
-        df_pca.to_csv(namecsv, index=False)
+        df_pca.to_csv(foldercsv + "/" + namecsv, index=False)
 
 
         #print("Colunas e seus valores:")

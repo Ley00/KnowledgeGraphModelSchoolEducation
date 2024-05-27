@@ -5,6 +5,9 @@ from Preprocessing.Views.Payment import get_paid_student_especific
 from Preprocessing.Views.Payment import get_paid_student
 from Preprocessing.CSV import savearchiveaverage
 from Preprocessing.CSV import savearchivepay
+from Preprocessing.Treatment.Average import averagetreatment
+from Preprocessing.Treatment.Payment import paymenttreatment
+from Grafos.RAG import rag
 import os
 
 def main():
@@ -15,17 +18,20 @@ def main():
         discipline = "Arte"
         academicperiod = "2023"
         
-        #Name Archive CSV
         namecsv = ["media_nota_aluno.csv", "pagamento_aluno.csv"]
+        foldercsv = "Result"
         
         #Delete Archive CSV
-        deleteoldcsv(namecsv)
+        deleteoldcsv(foldercsv, namecsv)
         
         #Média dos alunos
-        avg(session, namecsv[0], student_name, discipline, academicperiod)
+        avg(session, foldercsv, namecsv[0], student_name, discipline, academicperiod)
         
         #Pagamento dos alunos
-        payment(session, namecsv[1], student_name, academicperiod)
+        payment(session, foldercsv, namecsv[1], student_name, academicperiod)
+        
+        #Graph RAG
+        rag(foldercsv, namecsv[0])
         
     except Exception as e:
         print("Error:", e)
@@ -33,7 +39,7 @@ def main():
         if session:
             session.close()
 
-def avg(session, namecsv, student_name, discipline, academicperiod):
+def avg(session, foldercsv, namecsv, student_name, discipline, academicperiod):
     try:
         # Specific Student
         query = get_student_specific_averages(student_name, discipline, academicperiod)
@@ -46,12 +52,15 @@ def avg(session, namecsv, student_name, discipline, academicperiod):
         # Adds each query result to the list
         result_list = [resultads for resultads in result]
 
-        savearchiveaverage(result_list, namecsv)
+        savearchiveaverage(result_list, foldercsv, namecsv)
+        
+        # Chamando a função `averagetreatment` (não modificada)
+        averagetreatment(foldercsv, namecsv)
         
     except Exception as e:
         print("Error in avg function:", e)
         
-def payment(session, namecsv, student_name, academicperiod):
+def payment(session, foldercsv, namecsv, student_name, academicperiod):
     try:
         # Specific Student
         query = get_paid_student_especific(student_name, academicperiod)
@@ -64,16 +73,19 @@ def payment(session, namecsv, student_name, academicperiod):
         # Adds each query result to the list
         result_list = [resultads for resultads in result]
 
-        savearchivepay(result_list, namecsv)
+        savearchivepay(result_list, foldercsv, namecsv)
+
+        # Chamando a função `paymenttreatment` (não modificada)
+        paymenttreatment(foldercsv, namecsv)
         
     except Exception as e:
         print("Error in payment function:", e)
         
-def deleteoldcsv(namecsv):
+def deleteoldcsv(foldercsv, namecsv):
     try:
         for filename in namecsv:
-            if os.path.exists(filename):
-                os.remove(filename)
+            if os.path.exists(foldercsv + "/" + filename):
+                os.remove(foldercsv + "/" + filename)
                 print(f"Arquivo '{filename}' excluído com sucesso.")
             else:
                 print(f"Arquivo '{filename}' não encontrado.")

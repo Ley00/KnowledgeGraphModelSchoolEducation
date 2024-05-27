@@ -5,7 +5,7 @@ python -m venv venv
 venv\Scripts\activate
 
 # Instale as bibliotecas necessárias
-pip install numpy pandas pip pyodbc sqlalchemy tzdata scikit-learn
+pip install numpy pandas pip pyodbc sqlalchemy tzdata scikit-learn networkx tensorflow
 
 #Desativar o venv
 deactivate

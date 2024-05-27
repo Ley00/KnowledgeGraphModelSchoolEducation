@@ -16,9 +16,9 @@ def create_session():
         engine = sa.create_engine(connection_string)
 
         # Create a session class
-        Session = sessionmaker(bind=engine)
+        session = sessionmaker(bind=engine)
 
-        return Session()
+        return session()
     except Exception as e:
         print("Error occurred while creating session:", e)
         return None
