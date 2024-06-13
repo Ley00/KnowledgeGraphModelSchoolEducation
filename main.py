@@ -3,8 +3,8 @@ from Preprocessing.Views.AverageGrade import get_student_specific_averages
 from Preprocessing.Views.AverageGrade import get_student_averages
 from Preprocessing.Views.Payment import get_paid_student_especific
 from Preprocessing.Views.Payment import get_paid_student
-from Preprocessing.CSV import savearchiveaverage
-from Preprocessing.CSV import savearchivepay
+from Preprocessing.csv import savearchiveaverage
+from Preprocessing.csv import savearchivepay
 from Preprocessing.Treatment.Average import averagetreatment
 from Preprocessing.Treatment.Payment import paymenttreatment
 from Grafos.RAG import rag
@@ -31,7 +31,7 @@ def main():
         payment(session, foldercsv, namecsv[1], student_name, academicperiod)
         
         #Graph RAG
-        rag(foldercsv, namecsv[0])
+        #rag(foldercsv, namecsv[0])
         
     except Exception as e:
         print("Error:", e)

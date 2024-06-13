@@ -2,7 +2,12 @@ import pandas as pd
 import networkx as nx
 from sklearn.metrics import pairwise_distances
 from sklearn.preprocessing import MinMaxScaler
-import tensorflow as tf  # This import is not used in the provided code, but might be needed for future functionalities
+import tensorflow as tf
+from spektral.data import Graph
+from spektral.data import Dataset
+from spektral.layers import GraphConv
+from spektral.layers.pooling import GlobalSumPool
+from spektral.utils import sparse
 
 def create_rag(df, similarity_threshold=0.5):
     """
@@ -15,21 +20,16 @@ def create_rag(df, similarity_threshold=0.5):
     Returns:
         networkx.Graph: The constructed Relational Anomaly Graph (RAG).
     """
-
-    # Create a NetworkX graph
     G = nx.Graph()
-
-    # Add nodes to the graph
+    
     for index, row in df.iterrows():
         node_id = str(row['Aluno']) + '_' + str(row['Disciplina'])
         G.add_node(node_id, attributes=row.to_dict())
-
-    # Calculate pairwise distances between nodes
+    
     scaler = MinMaxScaler()
     scaled_grades = scaler.fit_transform(df[['Média']])
     pairwise_distances_matrix = pairwise_distances(scaled_grades, metric='euclidean')
-
-    # Add edges to the graph based on similarity
+    
     for i in range(len(df)):
         node_id_i = str(df.loc[i, 'Aluno']) + '_' + str(df.loc[i, 'Disciplina'])
         for j in range(i + 1, len(df)):
@@ -37,36 +37,68 @@ def create_rag(df, similarity_threshold=0.5):
             similarity = 1 - pairwise_distances_matrix[i, j]
             if similarity >= similarity_threshold:
                 G.add_edge(node_id_i, node_id_j, weight=similarity)
-
+    
     return G
+
+def get_student_labels(df):
+    """
+    Extracts the labels for the students from the DataFrame.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing the student grades data.
+
+    Returns:
+        np.array: Array of labels indicating if the student is at risk of dropout.
+    """
+    return df['Risco'].values  # Assuming 'Risco' column exists
+
+def create_graph_data(G):
+    """
+    Converts the networkx graph to Spektral's Graph object.
+
+    Args:
+        G (networkx.Graph): The relational anomaly graph.
+
+    Returns:
+        spektral.data.Graph: Spektral graph object.
+    """
+    nodes = list(G.nodes)
+    adj = nx.adjacency_matrix(G, nodelist=nodes)
+    features = [list(G.nodes[node]['attributes'].values()) for node in nodes]
+    
+    return Graph(x=tf.convert_to_tensor(features, dtype=tf.float32), 
+                 a=sparse.adj_to_sparse_tensor(adj))
+
+class MyDataset(Dataset):
+    def __init__(self, graph):
+        self.graph = graph
+        super().__init__()
+
+    def read(self):
+        return [self.graph]
 
 def training(df, RAG):
     """
     Trains a model on the provided Relational Anomaly Graph (RAG).
 
     Args:
-        df (pd.DataFrame): DataFrame containing the student grades data (potentially not used here).
+        df (pd.DataFrame): DataFrame containing the student grades data.
         RAG (networkx.Graph): The pre-built Relational Anomaly Graph.
     """
-
-    # No need to recreate the graph or add nodes/edges here as RAG is already built
-
-    # Use the provided RAG for training
-    # You might need to modify this section based on your specific training needs
-    # This example assumes using features from node attributes and labels derived elsewhere
-    model = tf.keras.layers.GraphNetwork(
-        layers=[
-            tf.keras.layers.GraphConv1D(16, activation='relu'),
-            tf.keras.layers.GraphConv1D(32, activation='relu'),
-            tf.keras.layers.GraphConv1D(16, activation='relu'),
-            tf.keras.layers.GraphPooling(pool_type='mean'),
-            tf.keras.layers.Dense(1, activation='sigmoid')
-        ]
-    )
-
-    # Train the model using features and labels (implementation depends on your specific data)
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(RAG, features=nx.get_node_attributes(RAG), labels=get_student_labels(df), epochs=10)  # Assuming labels are obtained from df
+    graph_data = create_graph_data(RAG)
+    dataset = MyDataset(graph_data)
+    
+    model = tf.keras.Sequential([
+        GraphConv(16, activation='relu', input_shape=(dataset.n_node_features, )),
+        GraphConv(32, activation='relu'),
+        GlobalSumPool(),
+        tf.keras.layers.Dense(1, activation='sigmoid')
+    ])
+    
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    labels = get_student_labels(df)
+    
+    model.fit(dataset, y=labels, epochs=10, batch_size=1)
 
 def rag(foldercsv, namecsv):
     """
@@ -76,15 +108,11 @@ def rag(foldercsv, namecsv):
         foldercsv (str): Path to the folder containing the CSV file.
         namecsv (str): Name of the CSV file containing student grades data.
     """
-
-    # Load student grades data from a CSV file
     df = pd.read_csv(f"{foldercsv}/{namecsv}", encoding='utf-8', decimal=',')
-
-    # Create the Relational Anomaly Graph (RAG)
+    
     RAG = create_rag(df, similarity_threshold=0.5)
-
-    # Train the model on the created RAG
+    
     training(df, RAG)
 
-# Example usage (assuming get_student_labels function is defined elsewhere)
+# Example usage
 rag("data", "notas_alunos.csv")
