@@ -7,7 +7,7 @@ from Preprocessing.csv import savearchiveaverage
 from Preprocessing.csv import savearchivepay
 from Preprocessing.Treatment.Average import averagetreatment
 from Preprocessing.Treatment.Payment import paymenttreatment
-from Grafos.RAG import rag
+#from Grafos.RAG import rag
 import os
 
 def main():

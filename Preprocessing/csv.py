@@ -9,29 +9,32 @@ def savearchiveaverage(results, foldercsv, namecsv):
   Função para salvar os resultados em um arquivo CSV na pasta "Result".
 
   Args:
-    results: Dicionário contendo os resultados a serem salvos.
-    namecsv: Nome do arquivo CSV (sem extensão).
+      results: Dicionário contendo os resultados a serem salvos.
+      namecsv: Nome do arquivo CSV (sem extensão).
 
   Returns:
-    None
+      None
   """
 
   try:
-    # Criando o DataFrame com os resultados
-    df = pd.DataFrame(results, columns=[
-      "Aluno", "Matrícula", "Situação da Matrícula", "Período Letivo", "Curso",
-      serie, "Turma", "Disciplina", "Etapa", media
-    ])
+      # Criando o DataFrame com os resultados
+      df = pd.DataFrame(results, columns=[
+          "Aluno", "Matrícula", "Situação da Matrícula", "Período Letivo", "Curso",
+          "Série", "Turma", "Disciplina", "Etapa", "Média"
+      ])
 
-    # Salvando o DataFrame no arquivo CSV na pasta "Result"
-    df.to_csv(f"{foldercsv}/{namecsv}", index=False, encoding='utf-8')
+      # Removendo espaços em branco desnecessários do nome do bimestre
+      df['Etapa'] = df['Etapa'].str.strip()
 
-    # Imprimindo mensagem de sucesso
-    print(f"Arquivo {namecsv}.csv salvo com sucesso na pasta Result!")
+      # Salvando o DataFrame no arquivo CSV na pasta "Result"
+      df.to_csv(f"{foldercsv}/{namecsv}", index=False, encoding='utf-8')
+
+      # Imprimindo mensagem de sucesso
+      print(f"Arquivo {namecsv}.csv salvo com sucesso na pasta Result!")
 
   except Exception as e:
-    # Imprimindo mensagem de erro
-    print(f"Erro ao escrever no arquivo CSV: {e}")
+      # Imprimindo mensagem de erro
+      print(f"Erro ao escrever no arquivo CSV: {e}")
 
 def savearchivepay(results, foldercsv, namecsv):
     """

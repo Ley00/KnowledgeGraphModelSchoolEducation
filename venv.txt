@@ -1,11 +1,12 @@
-# Crie um novo venv com o nome "venv"
+# Criar ambiente venv
 python -m venv venv
 
 # Ative o venv
-venv\Scripts\activate
+#Windows                    Mac
+venv\Scripts\activate       venv\Scripts\activate
 
 # Instale as bibliotecas necessárias
-pip install numpy pandas pip pyodbc sqlalchemy tzdata scikit-learn networkx tensorflow
+pip install numpy pandas pip pyodbc sqlalchemy tzdata scikit-learn networkx tensorflow matplotlib seaborn
 
 #Desativar o venv
 deactivate
