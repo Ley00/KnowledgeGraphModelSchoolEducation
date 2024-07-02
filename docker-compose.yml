@@ -1,0 +1,21 @@
+version: '3.0'
+
+services:
+
+  mssql:
+    container_name: mssql_server
+    hostname: mssql_server
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: 'Y'
+      MSSQL_SA_PASSWORD: 'dockerPwd123'
+      MSSQL_DATA_DIR: /var/opt/mssql/data
+      MSSQL_PID: 'Developer' 
+      MSSQL_TCP_PORT: 1433 
+    ports: 
+      - "1433:1433"
+    volumes:
+      - ./database/data:/var/opt/mssql/data
+      - ./database/log:/var/opt/mssql/log
+      - ./database/secrets:/var/opt/mssql/secrets

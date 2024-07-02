@@ -3,12 +3,12 @@ from Preprocessing.Views.AverageGrade import get_student_specific_averages
 from Preprocessing.Views.AverageGrade import get_student_averages
 from Preprocessing.Views.Payment import get_paid_student_especific
 from Preprocessing.Views.Payment import get_paid_student
-from Preprocessing.CSV import savearchiveaverage
-from Preprocessing.CSV import savearchivepay
+from Preprocessing.csv import savearchiveaverage
+from Preprocessing.csv import savearchivepay
 from Preprocessing.Treatment.Average import averagetreatment
 from Preprocessing.Treatment.Payment import paymenttreatment
-from Grafos.RAG import rag
-import os
+# from Grafos.RAG import rag
+from Grafos.RagWithLlama import rag
 
 def main():
     try:
@@ -29,9 +29,10 @@ def main():
         
         #Pagamento dos alunos
         payment(session, foldercsv, namecsv[1], student_name, academicperiod)
-        
+
         #Graph RAG
         rag(foldercsv, namecsv[0])
+        
         
     except Exception as e:
         print("Error:", e)
@@ -76,7 +77,7 @@ def payment(session, foldercsv, namecsv, student_name, academicperiod):
         savearchivepay(result_list, foldercsv, namecsv)
 
         # Chamando a função `paymenttreatment` (não modificada)
-        paymenttreatment(foldercsv, namecsv)
+        # paymenttreatment(foldercsv, namecsv)
         
     except Exception as e:
         print("Error in payment function:", e)

@@ -1,2 +1,14 @@
-Média,Valor Antecipado Movimento,Valor Movimento,Pago Movimento,Valor Pago,Diferença
-1098.076923076923,12880,15670.0,13,14275.0,1395.0
+Matrícula,Aluno,Situação da Matrícula,Período Letivo,Curso,Série,Turma,Parcela Movimento,Descrição Movimento,Data Antecipado Movimento,Valor Antecipado Movimento,Data Vencimento Movimento,Valor Movimento,Pago Movimento,Média
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,1,MATRÍCULA - 2023,2022-12-29,890.0000,2022-12-29,1110.0000,True,1000.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,1,Kit Integrado 6º ano EF 2023,2023-01-31,2200.0000,2023-01-31,2350.0000,True,2275.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,1,Mês FEVEREIRO,2023-02-17,890.0000,2023-02-28,1110.0000,True,1000.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,2,Mês MARÇO,2023-03-17,890.0000,2023-03-31,1110.0000,True,1000.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,3,Mês ABRIL,2023-04-17,890.0000,2023-04-30,1110.0000,True,1000.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,4,Mês MAIO,2023-05-17,890.0000,2023-05-31,1110.0000,True,1000.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,5,Mês JUNHO,2023-06-17,890.0000,2023-06-30,1110.0000,True,1000.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,6,Mês JULHO,2023-07-17,890.0000,2023-07-17,1110.0000,True,1000.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,7,Mês AGOSTO,2023-08-17,890.0000,2023-08-17,1110.0000,True,1000.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,8,Mês SETEMBRO,2023-09-17,890.0000,2023-09-17,1110.0000,True,1000.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,9,Mês OUTUBRO,2023-10-17,890.0000,2023-10-17,1110.0000,True,1000.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,10,Mês NOVEMBRO,2023-11-17,890.0000,2023-11-17,1110.0000,True,1000.0
+6583,Ana Cecília Tavares Aleixo,M,2023,Ensino Fundamental,6º Ano,6º Ano A - Matutino,11,Mês DEZEMBRO,2023-12-17,890.0000,2023-12-17,1110.0000,True,1000.0
