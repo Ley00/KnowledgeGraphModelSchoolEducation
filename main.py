@@ -9,6 +9,7 @@ from Preprocessing.Treatment.Average import averagetreatment
 from Preprocessing.Treatment.Payment import paymenttreatment
 # from Grafos.RAG import rag
 from Grafos.RagWithLlama import rag
+import os
 
 def main():
     try:
@@ -31,7 +32,7 @@ def main():
         payment(session, foldercsv, namecsv[1], student_name, academicperiod)
 
         #Graph RAG
-        rag(foldercsv, namecsv[0])
+        #rag(foldercsv, namecsv[0])
         
         
     except Exception as e:

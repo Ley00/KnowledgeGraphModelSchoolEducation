@@ -1,11 +1,13 @@
-# Crie um novo venv com o nome "venv"
+# Criar ambiente venv
 python -m venv venv
 
 # Ative o venv
-venv\Scripts\activate
+#Windows                    Mac
+venv\Scripts\activate       venv\Scripts\activate
 
 # Instale as bibliotecas necessárias
 pip install numpy pandas pip pyodbc sqlalchemy tzdata scikit-learn networkx tensorflow matplotlib seaborn
+
 pip install llama_index pyvis Ipython langchain pypdf
 pip install llama-index-llms-huggingface
 pip install llama-index-embeddings-langchain

@@ -4,8 +4,10 @@ from sqlalchemy.orm import sessionmaker
 def create_session():
     try:
         # Connection parameters
+        #Warley
         database = "COLEGIO_TESTE"
-        server_name = "DESKTOP-ESQU4CF\\SQLEXPRESS"
+        #server_name = "DESKTOP-ESQU4CF\\SQLEXPRESS"
+        server_name = "WARLEY\\PRISMA"
         username = "sa"
         password = "10203040"
         # server_name = "localhost"
