@@ -29,7 +29,5 @@ def create_session():
         return None
 
 session = create_session()
-if session:
-    print("Session created successfully.")
-else:
+if not session:
     print("Failed to create session.")

@@ -29,9 +29,6 @@ def savearchiveaverage(results, foldercsv, namecsv):
       # Salvando o DataFrame no arquivo CSV na pasta "Result"
       df.to_csv(f"{foldercsv}/{namecsv}", index=False, encoding='utf-8')
 
-      # Imprimindo mensagem de sucesso
-      print(f"Arquivo {namecsv}.csv salvo com sucesso na pasta Result!")
-
   except Exception as e:
       # Imprimindo mensagem de erro
       print(f"Erro ao escrever no arquivo CSV: {e}")
@@ -67,9 +64,6 @@ def savearchivepay(results, foldercsv, namecsv):
 
         # Salvando o DataFrame em um arquivo CSV na pasta "Result"
         df.to_csv(f"{foldercsv}/{namecsv}", index=False, encoding='utf-8')
-        
-        # Chamando a função `savearchivepay` (não modificada)
-        print(f"Arquivo {namecsv} salvo com sucesso na pasta Result!")
 
     except Exception as e:
         print(f"Erro ao salvar os dados no arquivo CSV: {e}")

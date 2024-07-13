@@ -7,8 +7,7 @@ from Preprocessing.csv import savearchiveaverage
 from Preprocessing.csv import savearchivepay
 from Preprocessing.Treatment.Average import averagetreatment
 from Preprocessing.Treatment.Payment import paymenttreatment
-# from Grafos.RAG import rag
-from Grafos.RagWithLlama import rag
+from Grafos.Rag import rag
 import os
 
 def main():
@@ -32,7 +31,7 @@ def main():
         payment(session, foldercsv, namecsv[1], student_name, academicperiod)
 
         #Graph RAG
-        #rag(foldercsv, namecsv[0])
+        rag(foldercsv)
         
         
     except Exception as e:
@@ -88,9 +87,9 @@ def deleteoldcsv(foldercsv, namecsv):
         for filename in namecsv:
             if os.path.exists(foldercsv + "/" + filename):
                 os.remove(foldercsv + "/" + filename)
-                print(f"Arquivo '{filename}' excluído com sucesso.")
-            else:
-                print(f"Arquivo '{filename}' não encontrado.")
+                #print(f"Arquivo '{filename}' excluído com sucesso.")
+            #else:
+                #print(f"Arquivo '{filename}' não encontrado.")
     except Exception as e:
         print(f"Erro ao excluir arquivo: {e}")
 

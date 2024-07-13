@@ -25,8 +25,8 @@ def detect_and_impute_outliers(data, method='z-score', threshold=3):
         # Separar os valores de média
         data_split = data.str.split().apply(lambda x: pd.Series(x))
 
-        # Converter os valores para float e empilhar as séries
-        data_float = data_split.astype(float).stack()
+        # Converter os valores para float, substituindo 'N/A' e outros valores não numéricos por NaN
+        data_float = data_split.apply(pd.to_numeric, errors='coerce').stack()
 
         # Calcular os z-scores
         zscores = (data_float - data_float.mean()) / data_float.std()
@@ -223,7 +223,8 @@ def averagetreatment(foldercsv, namecsv):
         #df_enriched = enrich_data(df_pca, student_id='Aluno')
 
         # Salvar dados pré-processados
-        df_pca.to_csv(foldercsv + "/" + namecsv, index=False)
+        #df_pca.to_csv(foldercsv + "/" + namecsv, index=False)
+        df[media].to_csv(foldercsv + "/" + namecsv, index=False)
 
 
         #print("Colunas e seus valores:")

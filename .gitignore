@@ -12,5 +12,5 @@ venv/
 .vscode/
 
 # File project
-*.csv
+.csv
 .pyc

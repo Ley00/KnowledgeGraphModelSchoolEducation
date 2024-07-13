@@ -39,8 +39,6 @@ def get_student_specific_averages(student_name, discipline, academicperiod):
         Medias ON Alunos.IDAluno = Medias.IDAlunoMedia AND EtapasxSeries.IDEtapaxSerie = Medias.IDEtapaxSerieMedia AND DisciplinasxSeries.IDDisciplinaxSerie = Medias.IDDisciplinaxSerieMedia
     WHERE
         (Alunos.NomeAluno = :student_name) 
-        AND (Disciplinas.NomeDisciplina = :discipline) 
-        AND (PeriodosLetivos.NomePeriodo = :academicperiod)
     ORDER BY
         Cursos.NomeCurso,
         Series.NomeSerie,
