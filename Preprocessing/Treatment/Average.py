@@ -224,7 +224,7 @@ def averagetreatment(foldercsv, namecsv):
 
         # Salvar dados pré-processados
         #df_pca.to_csv(foldercsv + "/" + namecsv, index=False)
-        df[media].to_csv(foldercsv + "/" + namecsv, index=False)
+        df.to_csv(foldercsv + "/" + namecsv, index=False)
 
 
         #print("Colunas e seus valores:")
