@@ -1,97 +1,124 @@
+import pandas as pd
+from setup import verify_dependencies
 from DataAccess import create_session
-from Preprocessing.Views.AverageGrade import get_student_specific_averages
-from Preprocessing.Views.AverageGrade import get_student_averages
-from Preprocessing.Views.Payment import get_paid_student_especific
-from Preprocessing.Views.Payment import get_paid_student
-from Preprocessing.csv import savearchiveaverage
-from Preprocessing.csv import savearchivepay
-from Preprocessing.Treatment.Average import averagetreatment
-from Preprocessing.Treatment.Payment import paymenttreatment
-from Grafos.Rag import rag
-import os
+from DataExtraction.File import savearchivestudent, filereader
+from DataExtraction.Views import get_student, get_student_guardians, get_student_averages,get_paid_student, get_student_absences, get_student_guardians
+from DataExtraction.Treatment import studenttreatment, averagetreatment, paymenttreatment, absencestreatment, guardianstreatment
+from Preprocessing.Graph import consult_student, graphnode, draw_graph
+from Training.GCN import gcn
 
 def main():
     try:
-        session = create_session()
+        #Deixe descomentado apenas quando precisar instalar ou verificar se as bibliotecas estão atualizadas.
+        #verify_dependencies()
         
-        student_name = "Ana Cecília Tavares Aleixo"
-        discipline = "Arte"
-        academicperiod = "2023"
-        
-        namecsv = ["media_nota_aluno.csv", "pagamento_aluno.csv"]
-        foldercsv = "Result"
-        
-        #Delete Archive CSV
-        deleteoldcsv(foldercsv, namecsv)
-        
-        #Média dos alunos
-        avg(session, foldercsv, namecsv[0], student_name, discipline, academicperiod)
-        
-        #Pagamento dos alunos
-        payment(session, foldercsv, namecsv[1], student_name, academicperiod)
+        session = create_session("Warley")
 
-        #Graph RAG
-        rag(foldercsv)
+        specific = True #Aluno específico
+        academicperiod = "2024"
+        student_name = "Ana Cecília Tavares Aleixo"
+        idaluno = "1B14A547-1A18-4909-9071-DA3130EAD991"
         
+        foldercsv = "Result"
+        filenames = {
+            "student": "aluno.csv",
+            "avg": "media_nota_aluno.csv",
+            "payment": "pagamento_aluno.csv",
+            "absences": "faltas_aluno.csv",
+            "guardians": "responsaveis_aluno.csv",
+            "networkx_graph": "networkx_graph.graphml",
+            "pytorch_graph": "pytorch_graph.pt"
+        }
+
+        # Processamento dos dados
+        #process_data(session, foldercsv, filenames, student_name, academicperiod, specific)
+
+        #Graph - Pré-Processing
+        #Alterar para que todas as colunas sejam passadas
+        graphnode(foldercsv, filenames)
+        #draw_graph(foldercsv, filenames["networkx_graph"])
+        consult_student(foldercsv, filenames["networkx_graph"], idaluno)
+
+        #if specific: info = consult_student(foldercsv, filenames, idaluno)
+
+        #Multi-Layer Perceptron + GCN:
+        #Usar MLP + GCN em conjunto é vantajoso quando seus dados incluem tanto informações individuais dos alunos (como notas, faltas e pagamentos) 
+        # quanto relações entre eles (como pertencem à mesma turma). O MLP processa as características individuais de forma eficiente, enquanto o GCN 
+        # modela as interações e padrões entre alunos, melhorando a generalização e a precisão do modelo. Juntos, eles permitem capturar tanto os aspectos 
+        # individuais quanto as relações estruturais entre alunos, proporcionando uma análise mais robusta e capaz de identificar padrões complexos, como as causas de 
+        # quedas nas notas ou faltas.
+
+        #Após o GCN gerar as representações dos alunos, você pode passar essas representações por um MLP para fazer previsões mais refinadas, como prever o motivo específico da queda 
+        #nas notas (por exemplo, baixa frequência, dificuldades em uma disciplina específica, etc.). O MLP pode atuar como um classificador ou um regressor, dependendo de como você 
+        # estrutura o problema.
+
+        #GCN
+        #gcn(G, data)
+
+        #Multi-Layer Perceptron
         
     except Exception as e:
-        print("Error:", e)
+        print(f"Error: {e}")
     finally:
         if session:
             session.close()
 
-def avg(session, foldercsv, namecsv, student_name, discipline, academicperiod):
+def process_data(session, foldercsv, filenames, student_name, academicperiod, specific):
+    """Gerencia a extração e tratamento de dados de alunos."""
     try:
-        # Specific Student
-        query = get_student_specific_averages(student_name, discipline, academicperiod)
-        result = session.execute(query, {"student_name": student_name, "discipline": discipline, "academicperiod": academicperiod})
+        # Processa os alunos
+        process_students(session, foldercsv, filenames["student"], student_name, academicperiod, specific)
 
-        # All Students
-        #query = get_student_averages()
-        #result = session.execute(query)
+        # Processa as demais informações (média, pagamento, faltas, responsáveis)
+        for key, view_func, treatment_func in [
+            ("avg", get_student_averages, averagetreatment),
+            ("payment", get_paid_student, paymenttreatment),
+            ("absences", get_student_absences, absencestreatment),
+            ("guardians", get_student_guardians, guardianstreatment),
+        ]:
+            process_generic(session, foldercsv, filenames["student"], filenames[key], view_func, treatment_func)
 
-        # Adds each query result to the list
-        result_list = [resultads for resultads in result]
-
-        savearchiveaverage(result_list, foldercsv, namecsv)
-        
-        # Chamando a função `averagetreatment` (não modificada)
-        averagetreatment(foldercsv, namecsv)
-        
     except Exception as e:
-        print("Error in avg function:", e)
-        
-def payment(session, foldercsv, namecsv, student_name, academicperiod):
+        print(f"Error in process_data: {e}")
+        raise
+
+def process_students(session, foldercsv, filename, student_name, academicperiod, specific):
+    """Obtém e processa informações dos alunos."""
     try:
-        # Specific Student
-        query = get_paid_student_especific(student_name, academicperiod)
-        result = session.execute(query, {"student_name": student_name, "academicperiod": academicperiod})
-
-        # All Students
-        #query = get_paid_student()
-        #result = session.execute(query)
-
-        # Adds each query result to the list
-        result_list = [resultads for resultads in result]
-
-        savearchivepay(result_list, foldercsv, namecsv)
-
-        # Chamando a função `paymenttreatment` (não modificada)
-        # paymenttreatment(foldercsv, namecsv)
+        query = get_student(specific, student_name, academicperiod)
+        params = {"student_name": student_name, "academicperiod": academicperiod} if student_name or academicperiod else {}
+        result = session.execute(query, params)
         
+        result_list = studenttreatment(result.keys(), [row for row in result])
+
+        columns = list(result.keys())
+        data = pd.DataFrame(result_list, columns=columns)
+        savearchivestudent(foldercsv, filename, data)
+
     except Exception as e:
-        print("Error in payment function:", e)
-        
-def deleteoldcsv(foldercsv, namecsv):
+        print(f"Error in process_students: {e}")
+        raise
+
+def process_generic(session, foldercsv, input_file, output_file, view_func, treatment_func):
+    """Processa qualquer tipo de informação (média, pagamento, faltas, responsáveis) para evitar repetição de código."""
     try:
-        for filename in namecsv:
-            if os.path.exists(foldercsv + "/" + filename):
-                os.remove(foldercsv + "/" + filename)
-                #print(f"Arquivo '{filename}' excluído com sucesso.")
-            #else:
-                #print(f"Arquivo '{filename}' não encontrado.")
+        df = filereader(foldercsv, input_file)
+        result_list = []
+
+        for _, row in df.iterrows():
+            query, params = view_func(row)
+            result = session.execute(query, params)
+            result_list.extend(result.fetchall())
+
+        processed_data = treatment_func(result.keys(), result_list)
+        
+        columns = list(result.keys())
+        data = pd.DataFrame(processed_data, columns=columns)
+        savearchivestudent(foldercsv, output_file, data)
+
     except Exception as e:
-        print(f"Erro ao excluir arquivo: {e}")
+        print(f"Error in process_generic ({output_file}): {e}")
+        raise
 
 if __name__ == "__main__":
     main()

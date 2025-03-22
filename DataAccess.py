@@ -1,33 +1,70 @@
+import os
+import platform
 import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker
+from urllib.parse import quote_plus
 
-def create_session():
+#Link para baixar o banco de dados COLEGIO_TESTE.bak no tipo SQL Server
+#https://1drv.ms/u/c/b0edc5d73af501e3/EfjFh-3O1gZJnL9n7upjOoABLV5-rbsM2ozDXGGE7k_U8A?e=juhoPe
+
+# Configuração sem credenciais expostas no código
+connections = {
+    "Warley": {
+        "driver": "ODBC Driver 18 for SQL Server",
+        "database": "COLEGIO_TESTE",
+        "server_name": "localhost",
+        "port": "1433",
+        "username": os.getenv("DB_USER_WARLEY", "sa"),
+        "password": os.getenv("DB_PASS_WARLEY", "Prism@1020")
+    },
+    "Lucas": {
+        "driver": "ODBC Driver 18 for SQL Server",
+        "database": "COLEGIO_TESTE",
+        "server_name": "localhost",
+        "port": "1433",
+        "username": os.getenv("DB_USER_LUCAS", "sa"),
+        "password": os.getenv("DB_PASS_LUCAS", "dockerPwd123")
+    }
+}
+
+def create_session(user):
     try:
-        # Connection parameters
-        #Warley
-        database = "COLEGIO_TESTE"
-        #server_name = "DESKTOP-ESQU4CF\\SQLEXPRESS"
-        server_name = "WARLEY\\PRISMA"
-        username = "sa"
-        password = "10203040"
-        # server_name = "localhost"
-        # password = "dockerPwd123"
+        connection_params = connections.get(user)
+        if not connection_params:
+            raise ValueError(f"Usuário '{user}' não encontrado nas configurações.")
 
-        # Create connection string
-        connection_string = f"mssql+pyodbc://{username}:{password}@{server_name}/{database}?driver=SQL+Server"
-        # connection_string = f"mssql+pyodbc://{username}:{password}@{server_name}/{database}?driver=ODBC Driver 18 for SQL Server&TrustServerCertificate=yes"
+        # Extrai os parâmetros de conexão
+        driver = connection_params["driver"]
+        database = connection_params["database"]
+        server_name = connection_params["server_name"]
+        port = connection_params["port"]
+        username = connection_params["username"]
+        password = connection_params["password"]
 
-        # Create an SQLAlchemy engine
-        engine = sa.create_engine(connection_string)
+        # Codifica senha para evitar problemas na URL de conexão
+        password_escaped = quote_plus(password)
 
-        # Create a session class
-        session = sessionmaker(bind=engine)
+        # Define a string de conexão de acordo com o sistema operacional
+        if platform.system() == "Darwin":  # macOS
+            connection_string = (
+                f"mssql+pyodbc://{username}:{password_escaped}@{server_name},{port}/{database}"
+                f"?driver={quote_plus(driver)}&TrustServerCertificate=yes"
+            )
+        elif platform.system() == "Windows":  # Windows
+            connection_string = (
+                f"mssql+pyodbc://{username}:{password_escaped}@{server_name},{port}/{database}"
+                f"?driver={quote_plus(driver)}&TrustServerCertificate=yes"
+            )
+        else:
+            raise OSError("Sistema operacional não suportado para esta conexão.")
 
-        return session()
+        # Cria um engine SQLAlchemy
+        engine = sa.create_engine(connection_string, echo=False)
+
+        # Cria uma sessão
+        Session = sessionmaker(bind=engine)
+        return Session()
+
     except Exception as e:
-        print("Error occurred while creating session:", e)
+        print(f"Erro ao criar a sessão para o usuário {user}: {e}")
         return None
-
-session = create_session()
-if not session:
-    print("Failed to create session.")

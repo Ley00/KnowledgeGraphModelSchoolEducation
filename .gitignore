@@ -1,16 +1,10 @@
-database/*
-database
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 
-# Environments
-env/
+# Ambiente virtual
 venv/
+.venv/
 
-# VS Code specific
-.vscode/
-
-# File project
-*.csv
-*.pyc
+# Arquivos temporários
+.DS_Store
+Result/
