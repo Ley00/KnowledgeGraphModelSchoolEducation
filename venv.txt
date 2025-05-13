@@ -1,21 +1,21 @@
-# Criar ambiente venv
-python3 -m venv venv
+# Criar ambiente .venv
+python3 -m venv .venv
 
-# Ative o venv
-#Windows                    Mac
-venv\Scripts\activate       source venv/bin/activate
+# Ative o .venv
+# Windows                                Mac
+.venv\Scripts\activate                   source .venv/bin/activate
 
 # Instale as bibliotecas necessárias
-pip install pyodbc sqlalchemy pandas scikit-learn matplotlib seaborn networkx llama_index pyvis Ipython langchain pypdf llama-index-llms-huggingface-api llama-index-embeddings-langchain langchain-community pydantic
+pip install pyodbc sqlalchemy pandas torch torchvision torchaudio torch-geometric scikit-learn matplotlib
 
-#Pacote para instalar no Mac
+# Pacote para instalar no Mac
 brew install unixodbc
 
 # Atualizar bibliotecas
-#Windows                                    #Mac
-python.exe -m pip install --upgrade pip     python3 -m pip install --upgrade pip
+# Windows                                    Mac
+python.exe -m pip install --upgrade pip      python3 -m pip install --upgrade pip
 
-#Pacotes Mac Adicionais
+# Pacotes Mac Adicionais
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
@@ -25,5 +25,5 @@ brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-rel
 brew update
 HOMEBREW_ACCEPT_EULA=Y brew install msodbcsql18 mssql-tools18
 
-#Desativar o venv
+# Desativar o .venv
 deactivate

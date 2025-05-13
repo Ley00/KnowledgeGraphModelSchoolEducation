@@ -7,26 +7,19 @@ from urllib.parse import quote_plus
 #Link para baixar o banco de dados COLEGIO_TESTE.bak no tipo SQL Server
 #https://1drv.ms/u/c/b0edc5d73af501e3/EfjFh-3O1gZJnL9n7upjOoABLV5-rbsM2ozDXGGE7k_U8A?e=juhoPe
 
-# Configuração sem credenciais expostas no código
+# Configurações de conexão com o banco de dados
 connections = {
     "Warley": {
         "driver": "ODBC Driver 18 for SQL Server",
         "database": "COLEGIO_TESTE",
-        "server_name": "localhost",
+        "server_name": "127.0.0.1",
         "port": "1433",
         "username": os.getenv("DB_USER_WARLEY", "sa"),
         "password": os.getenv("DB_PASS_WARLEY", "Prism@1020")
-    },
-    "Lucas": {
-        "driver": "ODBC Driver 18 for SQL Server",
-        "database": "COLEGIO_TESTE",
-        "server_name": "localhost",
-        "port": "1433",
-        "username": os.getenv("DB_USER_LUCAS", "sa"),
-        "password": os.getenv("DB_PASS_LUCAS", "dockerPwd123")
     }
 }
 
+# Cria sessão com o banco de dados SQL Server
 def create_session(user):
     try:
         connection_params = connections.get(user)
@@ -48,7 +41,7 @@ def create_session(user):
         if platform.system() == "Darwin":  # macOS
             connection_string = (
                 f"mssql+pyodbc://{username}:{password_escaped}@{server_name},{port}/{database}"
-                f"?driver={quote_plus(driver)}&TrustServerCertificate=yes"
+                f"?driver={quote_plus(driver)}&TrustServerCertificate=yes&Encrypt=no"
             )
         elif platform.system() == "Windows":  # Windows
             connection_string = (

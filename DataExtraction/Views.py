@@ -1,6 +1,7 @@
 import re
 from sqlalchemy import text
 
+#Consulta para buscar alunos
 def get_student(has_where, student_name=None, academicperiod=None):
     query = """
     SELECT
@@ -69,13 +70,19 @@ def get_student(has_where, student_name=None, academicperiod=None):
     
     return text(query)
 
+#Consulta para buscar o pagamento
 def get_paid_student(row):
     query = """
     SELECT
+        :IDUnidade AS IDUnidade,
         :NomeUnidade AS NomeUnidade,
+        :IDPeriodo AS IDPeriodo,
         :NomePeriodo AS NomePeriodo,
+        :IDCurso AS IDCurso,
         :NomeCurso AS NomeCurso,
+        :IDSerie AS IDSerie,
         :NomeSerie AS NomeSerie,
+        :IDTurma AS IDTurma,
         :ApelidoTurma AS ApelidoTurma,
         :IDMatricula AS IDMatricula,
         :SituacaoMatricula AS SituacaoMatricula,
@@ -106,13 +113,19 @@ def get_paid_student(row):
 
     return text(query), params
 
+#Consulta para buscar os responsáveis
 def get_student_guardians(row):
     query = """
     SELECT
+        :IDUnidade AS IDUnidade,
         :NomeUnidade AS NomeUnidade,
+        :IDPeriodo AS IDPeriodo,
         :NomePeriodo AS NomePeriodo,
+        :IDCurso AS IDCurso,
         :NomeCurso AS NomeCurso,
+        :IDSerie AS IDSerie,
         :NomeSerie AS NomeSerie,
+        :IDTurma AS IDTurma,
         :ApelidoTurma AS ApelidoTurma,
         :IDMatricula AS IDMatricula,
         :SituacaoMatricula AS SituacaoMatricula,
@@ -144,13 +157,19 @@ def get_student_guardians(row):
 
     return text(query), params
 
+#Consulta para buscar as médias
 def get_student_averages(row):
     query = """
     SELECT
+        :IDUnidade AS IDUnidade,
         :NomeUnidade AS NomeUnidade,
+        :IDPeriodo AS IDPeriodo,
         :NomePeriodo AS NomePeriodo,
+        :IDCurso AS IDCurso,
         :NomeCurso AS NomeCurso,
+        :IDSerie AS IDSerie,
         :NomeSerie AS NomeSerie,
+        :IDTurma AS IDTurma,
         :ApelidoTurma AS ApelidoTurma,
         :IDMatricula AS IDMatricula,
         :SituacaoMatricula AS SituacaoMatricula,
@@ -190,13 +209,19 @@ def get_student_averages(row):
 
     return text(query), params
 
+#Consulta para buscar as faltas
 def get_student_absences(row):
     query = """
     SELECT
+        :IDUnidade AS IDUnidade,
         :NomeUnidade AS NomeUnidade,
+        :IDPeriodo AS IDPeriodo,
         :NomePeriodo AS NomePeriodo,
+        :IDCurso AS IDCurso,
         :NomeCurso AS NomeCurso,
+        :IDSerie AS IDSerie,
         :NomeSerie AS NomeSerie,
+        :IDTurma AS IDTurma,
         :ApelidoTurma AS ApelidoTurma,
         :IDMatricula AS IDMatricula,
         :SituacaoMatricula AS SituacaoMatricula,

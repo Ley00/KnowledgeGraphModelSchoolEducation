@@ -9,30 +9,27 @@ dependencies = [
     'sqlalchemy', 
     'pandas', 
     'scikit-learn', 
-    'matplotlib', 
-    'seaborn', 
-    'networkx', 
-    'llama_index', 
-    'pyvis', 
-    'Ipython', 
-    'langchain', 
-    'pypdf', 
-    'llama-index-llms-huggingface', 
-    'llama-index-embeddings-langchain', 
-    'langchain-community', 
-    'pydantic'
+    'matplotlib',
+    'torch', 
+    'torchvision', 
+    'torchaudio',
+    'torch-geometric',
+    'seaborn',
 ]
 
-def create_virtualenv():
-    # Verifica se o ambiente virtual já existe
-    if not os.path.exists('venv'):
-        print("Criando ambiente virtual...")
-        subprocess.check_call([sys.executable, "-m", "venv", "venv"])
-    else:
-        print("Ambiente virtual já existe.")
+# Caminho do pip será definido globalmente
+pip_path = None
 
+# Cria o ambiente virtual
+def create_virtualenv():
+    if not os.path.exists('.venv'):
+        print("Criando ambiente virtual (.venv)...")
+        subprocess.check_call([sys.executable, "-m", "venv", ".venv"])
+    else:
+        print("Ambiente virtual (.venv) já existe.")
+
+# Verifica se as dependências estão instaladas
 def install_dependency(dependency):
-    # Verifica se a dependência já está instalada, caso contrário, instala
     try:
         print(f"Verificando se {dependency} está instalado...")
         subprocess.check_call([pip_path, 'show', dependency])
@@ -40,10 +37,9 @@ def install_dependency(dependency):
     except subprocess.CalledProcessError:
         print(f"{dependency} não encontrado. Instalando...")
         subprocess.check_call([pip_path, 'install', dependency])
-        sys.exit()
 
+# Atualiza a dependência, caso já esteja instalada
 def update_dependency(dependency):
-    # Atualiza a dependência, caso já esteja instalada
     try:
         print(f"Atualizando {dependency} para a versão mais recente...")
         subprocess.check_call([pip_path, 'install', '--upgrade', dependency])
@@ -51,52 +47,51 @@ def update_dependency(dependency):
         print(f"Erro ao atualizar {dependency}: {e}")
         sys.exit()
 
+# Instala o Homebrew e os pacotes MSODBCSQL18 e MSSQL-TOOLS18 no Mac
 def install_homebrew_dependencies():
-    """Instala o Homebrew e os pacotes MSODBCSQL18 e MSSQL-TOOLS18 no Mac, caso não estejam instalados."""
-    # Verifica se o Homebrew está instalado
     if platform.system() == 'Darwin':
         if subprocess.call(['which', 'brew']) != 0:
             print("Homebrew não encontrado. Instalando...")
             subprocess.check_call(['/bin/bash', '-c', "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"])
-            subprocess.check_call(['echo', 'eval "$(/opt/homebrew/bin/brew shellenv)"', '>>', '~/.zprofile'])
-            subprocess.check_call(['source', '~/.zprofile'])
+            subprocess.call(['echo', 'eval "$(/opt/homebrew/bin/brew shellenv)" >> ~/.zprofile'], shell=True)
+            subprocess.call(['source ~/.zprofile'], shell=True)
 
-        # Verifica se os pacotes MSODBCSQL18 e MSSQL-TOOLS18 estão instalados
         try:
             subprocess.check_call(['brew', 'tap', 'microsoft/mssql-release', 'https://github.com/Microsoft/homebrew-mssql-release'])
             subprocess.check_call(['brew', 'update'])
             print("Instalando msodbcsql18 e mssql-tools18...")
-            # Usando env para definir a variável HOMEBREW_ACCEPT_EULA
             env = os.environ.copy()
-            env['HOMEBREW_ACCEPT_EULA'] = 'Y'  # Definindo a variável de ambiente corretamente
+            env['HOMEBREW_ACCEPT_EULA'] = 'Y'
             subprocess.check_call(['brew', 'install', 'msodbcsql18', 'mssql-tools18'], env=env)
         except subprocess.CalledProcessError:
             print("Erro ao instalar os pacotes MSODBCSQL18 ou MSSQL-TOOLS18.")
             sys.exit()
 
+# Verifica o sistema operacional e instala as dependências
 def install_dependencies():
-    # Ativa o ambiente virtual e instala as dependências
-    if platform.system() == 'Darwin':  # Para MacOS
-        global pip_path
-        pip_path = './venv/bin/pip'
-        install_homebrew_dependencies()  # Instalar Homebrew e pacotes no Mac
-    elif platform.system() == 'Windows':  # Para Windows
-        pip_path = './venv/Scripts/pip.exe'
+    global pip_path
+    if platform.system() == 'Darwin':
+        pip_path = './.venv/bin/pip'
+        install_homebrew_dependencies()
+    elif platform.system() == 'Windows':
+        pip_path = '.\\.venv\\Scripts\\pip.exe'
     else:
         raise OSError("Sistema operacional não suportado.")
-    
+
     print("Instalando dependências...")
     for dependency in dependencies:
         install_dependency(dependency)
 
+# Atualiza as dependências
 def update_dependencies():
-    # Atualiza as dependências
     print("Atualizando dependências...")
     for dependency in dependencies:
         update_dependency(dependency)
 
+# Verifica se o ambiente virtual e as dependências estão instaladas
 def verify_dependencies():
     create_virtualenv()
     install_dependencies()
     update_dependencies()
-    install_homebrew_dependencies()
+    if platform.system() == 'Darwin':
+        install_homebrew_dependencies()

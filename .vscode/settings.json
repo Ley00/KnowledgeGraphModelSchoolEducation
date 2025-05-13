@@ -1,9 +1,9 @@
 {
     "files.exclude": {
         "**/.vscode": true,
+        "**/.venv": true,
         
         "**/__pycache__": true,
-        "**/venv": true,
 
         "**/.git": true,
         "**/LICENSE": true,
