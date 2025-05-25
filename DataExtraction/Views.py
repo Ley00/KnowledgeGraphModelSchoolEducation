@@ -70,6 +70,109 @@ def get_student(has_where, student_name=None, academicperiod=None):
     
     return text(query)
 
+#Consulta para buscar as médias
+def get_student_averages(row):
+    query = """
+    SELECT
+        :IDUnidade AS IDUnidade,
+        :NomeUnidade AS NomeUnidade,
+        :IDPeriodo AS IDPeriodo,
+        :NomePeriodo AS NomePeriodo,
+        :IDCurso AS IDCurso,
+        :NomeCurso AS NomeCurso,
+        :IDSerie AS IDSerie,
+        :NomeSerie AS NomeSerie,
+        :IDTurma AS IDTurma,
+        :ApelidoTurma AS ApelidoTurma,
+        :IDMatricula AS IDMatricula,
+        :SituacaoMatricula AS SituacaoMatricula,
+        :IDAluno AS IDAluno,
+        :NomeAluno AS NomeAluno,
+        Disciplinas.IDDisciplina,
+        Disciplinas.NomeDisciplina,
+        Etapas.IDEtapa,
+        Etapas.NomeEtapa,
+        Medias.IDMedia,
+        Medias.ValorMedia
+    FROM
+        Medias
+    INNER JOIN
+        EtapasxSeries ON Medias.IDEtapaxSerieMedia = EtapasxSeries.IDEtapaxSerie
+        AND EtapasxSeries.IDSerieEtapaxSerie = :IDSerie
+    INNER JOIN
+        Etapas ON EtapasxSeries.IDEtapaEtapaxSerie = Etapas.IDEtapa
+    INNER JOIN
+        MatriculasxDiciplinas ON MatriculasxDiciplinas.IDMatriculaMatriculaxDisciplina = :IDMatricula
+        AND MatriculasxDiciplinas.IDTurmaMatriculaxDisciplina = :IDTurma
+    INNER JOIN
+        DisciplinasxSeries ON MatriculasxDiciplinas.IDDisciplinaxSerieMatriculaxDisciplina = DisciplinasxSeries.IDDisciplinaxSerie
+        AND DisciplinasxSeries.IDSerieDisciplinaxSerie = :IDSerie
+    INNER JOIN
+        Disciplinas ON DisciplinasxSeries.IDDisciplinaDisciplinaxSerie = Disciplinas.IDDisciplina
+        AND Medias.IDDisciplinaxSerieMedia = DisciplinasxSeries.IDDisciplinaxSerie
+    WHERE
+        Medias.IDAlunoMedia = :IDAluno
+        AND Etapas.OrdemEtapa > 0 AND Etapas.OrdemEtapa < 5
+    ORDER BY 
+        Disciplinas.NomeDisciplina,
+        Etapas.OrdemEtapa
+    """
+
+    placeholders = set(re.findall(r":(\w+)", query))
+    params = {col: row[col] for col in placeholders if col in row}
+
+    return text(query), params
+    query = """
+    SELECT
+        :IDUnidade AS IDUnidade,
+        :NomeUnidade AS NomeUnidade,
+        :IDPeriodo AS IDPeriodo,
+        :NomePeriodo AS NomePeriodo,
+        :IDCurso AS IDCurso,
+        :NomeCurso AS NomeCurso,
+        :IDSerie AS IDSerie,
+        :NomeSerie AS NomeSerie,
+        :IDTurma AS IDTurma,
+        :ApelidoTurma AS ApelidoTurma,
+        :IDMatricula AS IDMatricula,
+        :SituacaoMatricula AS SituacaoMatricula,
+        :IDAluno AS IDAluno,
+        :NomeAluno AS NomeAluno,
+        Disciplinas.IDDisciplina,
+        Disciplinas.NomeDisciplina,
+        Etapas.IDEtapa,
+        Etapas.NomeEtapa,
+        Medias.IDMedia,
+        Medias.ValorMedia
+    FROM
+        Medias
+    INNER JOIN
+        EtapasxSeries ON Medias.IDEtapaxSerieMedia = EtapasxSeries.IDEtapaxSerie
+        AND EtapasxSeries.IDSerieEtapaxSerie = :IDSerie
+    INNER JOIN
+        Etapas ON EtapasxSeries.IDEtapaEtapaxSerie = Etapas.IDEtapa
+    INNER JOIN
+        MatriculasxDiciplinas ON MatriculasxDiciplinas.IDMatriculaMatriculaxDisciplina = :IDMatricula
+        AND MatriculasxDiciplinas.IDTurmaMatriculaxDisciplina = :IDTurma
+    INNER JOIN
+        DisciplinasxSeries ON MatriculasxDiciplinas.IDDisciplinaxSerieMatriculaxDisciplina = DisciplinasxSeries.IDDisciplinaxSerie
+        AND DisciplinasxSeries.IDSerieDisciplinaxSerie = :IDSerie
+    INNER JOIN
+        Disciplinas ON DisciplinasxSeries.IDDisciplinaDisciplinaxSerie = Disciplinas.IDDisciplina
+        AND Medias.IDDisciplinaxSerieMedia = DisciplinasxSeries.IDDisciplinaxSerie
+    WHERE
+        Medias.IDAlunoMedia = :IDAluno
+        AND Etapas.OrdemEtapa > 0 AND Etapas.OrdemEtapa < 5
+    ORDER BY 
+        Disciplinas.NomeDisciplina,
+        Etapas.OrdemEtapa
+    """
+
+    placeholders = set(re.findall(r":(\w+)", query))
+    params = {col: row[col] for col in placeholders if col in row}
+
+    return text(query), params
+
 #Consulta para buscar o pagamento
 def get_paid_student(row):
     query = """
@@ -150,58 +253,6 @@ def get_student_guardians(row):
         AND AlunosxResponsaveis.IDResponsavelAlunoxResponsavel = Responsaveis.IDResponsavel
     ORDER BY
         Responsaveis.NomeResponsavel
-    """
-
-    placeholders = set(re.findall(r":(\w+)", query))
-    params = {col: row[col] for col in placeholders if col in row}
-
-    return text(query), params
-
-#Consulta para buscar as médias
-def get_student_averages(row):
-    query = """
-    SELECT
-        :IDUnidade AS IDUnidade,
-        :NomeUnidade AS NomeUnidade,
-        :IDPeriodo AS IDPeriodo,
-        :NomePeriodo AS NomePeriodo,
-        :IDCurso AS IDCurso,
-        :NomeCurso AS NomeCurso,
-        :IDSerie AS IDSerie,
-        :NomeSerie AS NomeSerie,
-        :IDTurma AS IDTurma,
-        :ApelidoTurma AS ApelidoTurma,
-        :IDMatricula AS IDMatricula,
-        :SituacaoMatricula AS SituacaoMatricula,
-        :IDAluno AS IDAluno,
-        :NomeAluno AS NomeAluno,
-        Disciplinas.IDDisciplina,
-        Disciplinas.NomeDisciplina,
-        Etapas.IDEtapa,
-        Etapas.NomeEtapa,
-        Medias.IDMedia,
-        Medias.ValorMedia
-    FROM
-        Medias
-    INNER JOIN
-        EtapasxSeries ON Medias.IDEtapaxSerieMedia = EtapasxSeries.IDEtapaxSerie
-        AND EtapasxSeries.IDSerieEtapaxSerie = :IDSerie
-    INNER JOIN
-        Etapas ON EtapasxSeries.IDEtapaEtapaxSerie = Etapas.IDEtapa
-    INNER JOIN
-        MatriculasxDiciplinas ON MatriculasxDiciplinas.IDMatriculaMatriculaxDisciplina = :IDMatricula
-        AND MatriculasxDiciplinas.IDTurmaMatriculaxDisciplina = :IDTurma
-    INNER JOIN
-        DisciplinasxSeries ON MatriculasxDiciplinas.IDDisciplinaxSerieMatriculaxDisciplina = DisciplinasxSeries.IDDisciplinaxSerie
-        AND DisciplinasxSeries.IDSerieDisciplinaxSerie = :IDSerie
-    INNER JOIN
-        Disciplinas ON DisciplinasxSeries.IDDisciplinaDisciplinaxSerie = Disciplinas.IDDisciplina
-        AND Medias.IDDisciplinaxSerieMedia = DisciplinasxSeries.IDDisciplinaxSerie
-    WHERE
-        Medias.IDAlunoMedia = :IDAluno
-    ORDER BY 
-        Disciplinas.NomeDisciplina,
-        Etapas.OrdemEtapa
     """
 
     placeholders = set(re.findall(r":(\w+)", query))

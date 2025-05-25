@@ -24,7 +24,7 @@ def main():
         manager = GraphManager()
 
         # Extração dos dados para CSV
-        # process_data(session, manager, student_name, academicperiod, specific)
+        process_data(session, manager, student_name, academicperiod, specific)
 
         # Análise de correlação
         # correlation_analysis(manager)
@@ -33,7 +33,7 @@ def main():
         # classifiers_comparison_mf(manager)
 
         # Comparação de classificadores com PCA
-        classifiers_comparison_pca(manager)
+        # classifiers_comparison_pca(manager)
 
         # Processa um grafo heterogêneo a partir de dados tabulares CSV
         # graphnode(manager)

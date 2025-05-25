@@ -89,15 +89,11 @@ def train_and_evaluate_classifiers(X_train, X_test, y_train, y_test):
 
 # Função para plotar os resultados de acurácia
 def plot_classification_results(results):
-    if not results:
-        return
-
     names = list(results.keys())
     accuracies_test = [res.get("accuracy_test") for res in results.values()]
 
     valid_names = [name for i, name in enumerate(names) if accuracies_test[i] is not None]
     valid_accuracies = [acc for acc in accuracies_test if acc is not None]
-
 
     plt.figure(figsize=(14, 7))
     bars = plt.bar(valid_names, valid_accuracies, color='skyblue')
@@ -118,8 +114,12 @@ def plot_classification_results(results):
 # Função principal para comparação de classificadores de multiplas features
 def classifiers_comparison_mf(manager: GraphManager):
     df = load_and_prepare_data(manager, manager.features, manager.target, manager.average)
-    if df is None:
-        return {}
+    
+    # Reduzindo o tamanho do DataFrame para 5% dos dados
+    df = df.sample(frac=0.05, random_state=42).reset_index(drop=True)
+
+    # Filtra para apenas os alunos do período 2024
+    # df = df[df['NomePeriodo'] == '2024'].reset_index(drop=True)
 
     df_encoded, _ = encode_labels(df, manager.features)
     X = df_encoded[manager.features]

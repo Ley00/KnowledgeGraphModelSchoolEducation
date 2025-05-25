@@ -1,12 +1,11 @@
-from matplotlib.colors import ListedColormap
 import numpy
 import pandas
 import matplotlib.pyplot as plt
 import gc
+from matplotlib.colors import ListedColormap
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.feature_selection import SelectKBest, mutual_info_classif
-from sklearn.manifold import TSNE
-from sklearn.pipeline import make_pipeline
+from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.gaussian_process import GaussianProcessClassifier
@@ -24,17 +23,15 @@ def encode_labels(df, columns):
     le_dict = {}
     df_encoded = df.copy()
     for col in columns:
-        if col in df_encoded.columns:
-            le = LabelEncoder()
-            df_encoded[col] = le.fit_transform(df_encoded[col])
-            le_dict[col] = le
-        else:
-            print(f"Aviso: Coluna '{col}' não encontrada para codificação.")
+        le = LabelEncoder()
+        df_encoded[col] = le.fit_transform(df_encoded[col])
+        le_dict[col] = le
     return df_encoded, le_dict
 
 # Carregamento e preparação dos dados
 def load_and_prepare_data(manager, features, target, average):
     df = filereader(manager.filename[2])
+    df = df[[col for col in df.columns if 'ID' not in col]]
     df[average] = pandas.to_numeric(df[average], errors="coerce", downcast='float')
     df = df.dropna(subset=[average])
     df[target] = df[average].apply(manager.classify_grade).astype("category")
@@ -53,11 +50,11 @@ def sample_stratified(df, target, sample_size, target_names):
 def preprocess_data(X, y, k_best):
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
-    selector = SelectKBest(score_func=mutual_info_classif, k=min(k_best, X_scaled.shape[1]))
+    selector = SelectKBest(score_func=f_classif, k=min(k_best, X_scaled.shape[1]))
     X_selected = selector.fit_transform(X_scaled, y)
-    tsne = TSNE(n_components=2, perplexity=30, random_state=42)
-    X_tsne = tsne.fit_transform(X_selected)
-    return X_selected, X_tsne
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X_selected)
+    return X_selected, X_pca
 
 # Obtenção dos classificadores e seus nomes
 def get_classifiers():
@@ -118,8 +115,9 @@ def plot_classifiers_results(X_vis, X_train, y, classifiers, names, target_label
 # Função principal de comparação
 def classifiers_comparison_pca(manager: GraphManager, sample_size=100, k_best=5):
     df = load_and_prepare_data(manager, manager.features, manager.target, manager.average)
-    if df is None:
-        return
+
+    # Filtrando os dados para o ano de 2024
+    df = df[df['NomePeriodo'] == '2024'].reset_index(drop=True)
 
     columns_needed = manager.features + [manager.target]
     df = df[columns_needed].copy()
@@ -137,6 +135,7 @@ def classifiers_comparison_pca(manager: GraphManager, sample_size=100, k_best=5)
 
     X_selected, X_tsne = preprocess_data(X, y, k_best)
     names, classifiers = get_classifiers()
+    # names, classifiers = manager.get_best_classifiers(X_selected, y)
     plot_classifiers_results(X_tsne, X_selected, y, classifiers, names, target_names)
 
     del df, df_encoded, X, y, X_selected, X_tsne
