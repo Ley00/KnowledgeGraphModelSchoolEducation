@@ -14,7 +14,7 @@ from sklearn.svm import SVC
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.metrics import accuracy_score, classification_report
 from Class import GraphManager
-from DataExtraction.File import filereader
+from BDBasic.DataExtraction.File import filereader
 
 # Função para codificar rótulos de colunas específicas
 def encode_labels(df, columns):

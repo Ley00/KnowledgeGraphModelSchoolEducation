@@ -1,7 +1,7 @@
 import seaborn
 import matplotlib.pyplot as plt
 from Class import GraphManager
-from DataExtraction.File import filereader
+from BDBasic.DataExtraction.File import filereader
 
 # Análise de correlação entre as features e a média
 def correlation_analysis(manager: GraphManager):

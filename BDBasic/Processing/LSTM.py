@@ -1,10 +1,10 @@
 import pickle
 from torch_geometric.loader import DataLoader
 from Class import GraphManager
-from DataExtraction.File import filereader, savearchivestudent
-from KnotAndEdges.ReaderNetPy import extractpytorch
-from Processing.Preprocessing import generate_embeddings, normalize_data, process_attributes
-from Processing.Training import GCNModel, create_optimizer_and_loss, run_training, build_graph
+from BDBasic.DataExtraction.File import filereader, savearchivestudent
+from BDBasic.KnotAndEdges.ReaderNetPy import extractpytorch
+from BDBasic.Processing.Preprocessing import generate_embeddings, normalize_data, process_attributes
+from BDBasic.Processing.Training import GCNModel, create_optimizer_and_loss, run_training, build_graph
 
 def lstm(manager: GraphManager):
     # Carregar o grafo do arquivo

@@ -7,4 +7,5 @@ venv/
 
 # Arquivos temporários
 .DS_Store
-Result/
+BDBasic/Result/
+BDTreatment/Result/

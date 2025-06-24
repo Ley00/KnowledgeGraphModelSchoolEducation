@@ -1,8 +1,8 @@
 import networkx
 from matplotlib import pyplot
 from Class import GraphManager
-from DataExtraction.File import filereader
-from KnotAndEdges.ReaderNetPy import extractnetworkx, extractpytorch
+from BDBasic.DataExtraction.File import filereader
+from BDBasic.KnotAndEdges.ReaderNetPy import extractnetworkx, extractpytorch
 
 # Este script é usado para visualizar e analisar dados de alunos usando NetworkX e PyTorch Geometric
 def draw_graph(manager: GraphManager):

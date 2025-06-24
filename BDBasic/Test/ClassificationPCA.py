@@ -16,7 +16,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.neural_network import MLPClassifier
 from Class import GraphManager
-from DataExtraction.File import filereader
+from BDBasic.DataExtraction.File import filereader
 
 # Codificação de colunas categóricas
 def encode_labels(df, columns):

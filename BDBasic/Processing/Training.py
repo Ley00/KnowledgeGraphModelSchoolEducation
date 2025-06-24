@@ -1,6 +1,6 @@
 import torch
 from torch_geometric.data import Data
-from Processing.TemplateDefinition import activation_layer, first_layer, second_layer
+from BDBasic.Processing.TemplateDefinition import activation_layer, first_layer, second_layer
 from sklearn.metrics import mean_absolute_error, r2_score
 
 # Modelo GCN com duas camadas e ReLU

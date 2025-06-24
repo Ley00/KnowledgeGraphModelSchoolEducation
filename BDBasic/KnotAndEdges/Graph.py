@@ -3,7 +3,7 @@ import pandas
 import torch
 from sklearn.preprocessing import OneHotEncoder
 from Class import GraphManager
-from DataExtraction.File import filereader, savearchivestudent
+from BDBasic.DataExtraction.File import filereader, savearchivestudent
 
 # Processa os dados e adiciona nós e arestas ao grafo
 def add_entities_and_relations(G, data, node_type, relation, id_column, enrollment_column=None, node_mapping=None, node_count=0, data_types=None):

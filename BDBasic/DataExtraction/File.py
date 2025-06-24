@@ -61,8 +61,7 @@ def filereader(filename):
         ext = filename.split('.')[-1].lower()
 
         if ext == 'csv':
-            df = pandas.read_csv(file_path, encoding='utf-8', decimal=',')
-            df = df.astype(str).fillna("NULL")
+            df = pandas.read_csv(file_path, encoding='utf-8', decimal=',', low_memory=False)
             return df
 
         elif ext == 'json':

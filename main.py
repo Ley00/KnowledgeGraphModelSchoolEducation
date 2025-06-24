@@ -1,13 +1,15 @@
+from BDTreatment.DataExtraction.Treatment import average_single_line
 from Class import GraphManager
-from Test.ClassificationPCA import classifiers_comparison_pca
-from Test.CorrelationAnalysis import correlation_analysis
+from BDTreatment.DataExtraction.DataUnderstanding import data_understanding
+from BDBasic.Test.ClassificationPCA import classifiers_comparison_pca
+from BDBasic.Test.CorrelationAnalysis import correlation_analysis
 from setup import verify_dependencies
 from DataAccess import create_session
-from DataExtraction.Treatment import process_data
-from KnotAndEdges.Graph import graphnode
-from KnotAndEdges.ConsultNetPy import consult_student_networkx, consult_student_pytorch, draw_graph
-from Processing.LSTM import lstm
-from Test.ClassificationModel import classifiers_comparison_mf
+from BDBasic.DataExtraction.Treatment import process_data
+from BDBasic.KnotAndEdges.Graph import graphnode
+from BDBasic.KnotAndEdges.ConsultNetPy import consult_student_networkx, consult_student_pytorch, draw_graph
+from BDBasic.Processing.LSTM import lstm
+from BDBasic.Test.ClassificationModel import classifiers_comparison_mf
 
 def main():
     try:
@@ -24,7 +26,7 @@ def main():
         manager = GraphManager()
 
         # Extração dos dados para CSV
-        process_data(session, manager, student_name, academicperiod, specific)
+        # process_data(session, manager, student_name, academicperiod, specific)
 
         # Análise de correlação
         # correlation_analysis(manager)
@@ -34,6 +36,9 @@ def main():
 
         # Comparação de classificadores com PCA
         # classifiers_comparison_pca(manager)
+
+        # Data Understanding
+        # data_understanding(manager)
 
         # Processa um grafo heterogêneo a partir de dados tabulares CSV
         # graphnode(manager)
@@ -45,6 +50,11 @@ def main():
 
         # Treinamento do modelo LSTM
         # lstm(manager)
+
+
+        # BDTreatment
+        average_single_line(manager)
+        # data_understanding(manager)
 
         '''
         PRÉ-PROCESSAMENTO DOS DADOS

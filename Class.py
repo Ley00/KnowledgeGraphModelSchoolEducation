@@ -4,7 +4,6 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.model_selection import GridSearchCV
-from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
@@ -15,9 +14,9 @@ class GraphManager:
         self.graph = networkx.Graph()
         self.node_mapping = {}
         self.node_count = 0
-        self.folder = "Result"
+        self.folder = "BDBasic/Result"
 
-        # Diretórios personalizados
+        # Diretórios BDBasic
         csv_dir = os.path.join(self.folder, "CSV")
         preprocessing_dir = os.path.join(self.folder, "Preprocessing")
         processing_dir = os.path.join(self.folder, "Processing")
@@ -33,7 +32,7 @@ class GraphManager:
             7: os.path.join(preprocessing_dir, "pytorch_graph.pt"),
             8: os.path.join(processing_dir, "lstm_grade_prediction.pth"),
             9: os.path.join(processing_dir, "scalers.pkl"),
-            10: os.path.join(csv_dir, "media_nota_aluno_single_line.csv")
+            10: os.path.join(os.path.join("BDTreatment/Result", "CSV"), "media_nota_aluno_single_line.csv")
         }
 
         self.data_types = [
