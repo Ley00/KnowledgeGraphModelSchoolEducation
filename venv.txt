@@ -6,7 +6,7 @@ python3 -m venv .venv
 .venv\Scripts\activate                   source .venv/bin/activate
 
 # Instale as bibliotecas necessárias
-pip install pyodbc sqlalchemy pandas torch torchvision torchaudio torch-geometric scikit-learn matplotlib
+pip install pyodbc sqlalchemy pandas torch torchvision torchaudio torch-geometric scikit-learn matplotlib seaborn
 
 # Pacote para instalar no Mac
 brew install unixodbc

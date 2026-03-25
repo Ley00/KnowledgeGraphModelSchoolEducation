@@ -15,6 +15,7 @@ class GraphManager:
         self.node_mapping = {}
         self.node_count = 0
         self.folder = "BDBasic/Result"
+        self.folder2 = "BDTreatment/Result"
 
         # Diretórios BDBasic
         csv_dir = os.path.join(self.folder, "CSV")
@@ -32,7 +33,11 @@ class GraphManager:
             7: os.path.join(preprocessing_dir, "pytorch_graph.pt"),
             8: os.path.join(processing_dir, "lstm_grade_prediction.pth"),
             9: os.path.join(processing_dir, "scalers.pkl"),
-            10: os.path.join(os.path.join("BDTreatment/Result", "CSV"), "media_nota_aluno_single_line.csv")
+
+            10: os.path.join(self.folder2, "media_nota_aluno_single_line.csv"),
+            11: os.path.join(self.folder2, "data_understanding_report.txt"),
+            12: os.path.join(self.folder2, "model_evaluation_report.txt"),
+            13: os.path.join(self.folder2, "random_forest_model.pkl")
         }
 
         self.data_types = [

@@ -1,6 +1,4 @@
-from BDTreatment.DataExtraction.Treatment import average_single_line
 from Class import GraphManager
-from BDTreatment.DataExtraction.DataUnderstanding import data_understanding
 from BDBasic.Test.ClassificationPCA import classifiers_comparison_pca
 from BDBasic.Test.CorrelationAnalysis import correlation_analysis
 from setup import verify_dependencies
@@ -10,8 +8,12 @@ from BDBasic.KnotAndEdges.Graph import graphnode
 from BDBasic.KnotAndEdges.ConsultNetPy import consult_student_networkx, consult_student_pytorch, draw_graph
 from BDBasic.Processing.LSTM import lstm
 from BDBasic.Test.ClassificationModel import classifiers_comparison_mf
+from BDTreatment.DataExtraction.DataUnderstanding import data_understanding_one
+from BDTreatment.DataExtraction.Treatment import process_data_one, check_student_grade_one
+from BDTreatment.Processing.RandomForest import random_forest_one
 
 def main():
+    session = None
     try:
         # Deixe descomentado apenas quando precisar instalar ou verificar se as bibliotecas estão atualizadas.
         # verify_dependencies()
@@ -25,6 +27,7 @@ def main():
 
         manager = GraphManager()
 
+        # BDBASIC
         # Extração dos dados para CSV
         # process_data(session, manager, student_name, academicperiod, specific)
 
@@ -36,9 +39,6 @@ def main():
 
         # Comparação de classificadores com PCA
         # classifiers_comparison_pca(manager)
-
-        # Data Understanding
-        # data_understanding(manager)
 
         # Processa um grafo heterogêneo a partir de dados tabulares CSV
         # graphnode(manager)
@@ -52,9 +52,14 @@ def main():
         # lstm(manager)
 
 
-        # BDTreatment
-        average_single_line(manager)
-        # data_understanding(manager)
+
+        # BDTREATMENT
+        # Extração dos dados para CSV
+        # process_data_one(manager)
+        # check_student_grade_one(manager)
+        # data_understanding_one(manager)
+
+        random_forest_one(manager)
 
         '''
         PRÉ-PROCESSAMENTO DOS DADOS
@@ -129,7 +134,7 @@ def main():
     except Exception as e:
         print(f"Error: {e}")
     finally:
-        if session:
+        if session is not None:
             session.close()
 
 if __name__ == "__main__":

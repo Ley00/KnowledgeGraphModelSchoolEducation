@@ -12,8 +12,5 @@
 
         "**/venv.txt": true,
         "**/docker-compose.yml": true
-    },
-    "python.analysis.extraPaths": [
-        "./BDBasic"
-    ]
+    }
 }

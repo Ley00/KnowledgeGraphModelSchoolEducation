@@ -92,14 +92,14 @@ def normalize_data(X, y):
 def generate_embeddings(keys, embedding_dim=8):
     categories = defaultdict(set)
     for key in keys:
-        for i, field in enumerate(CATEGORICAL_CAMPS):
+        for i, field in enumerate(GraphManager.classify_grade):
             categories[field].add(key[i])
 
     embedding_model = CategoricalEmbedding(categories, embedding_dim)
 
     all_embeddings = []
     for key in keys:
-        sample = {field: key[i] for i, field in enumerate(CATEGORICAL_CAMPS)}
+        sample = {field: key[i] for i, field in enumerate(GraphManager.classify_grade)}
         emb = embedding_model(sample)
         all_embeddings.append(emb)
 

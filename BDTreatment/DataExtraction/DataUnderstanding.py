@@ -4,25 +4,22 @@ from Class import GraphManager
 from BDBasic.DataExtraction.File import filereader
 import pandas
 
-def data_understanding(manager: GraphManager):
+def data_understanding_one(manager: GraphManager):
     try:
-        output_path = "BDTreatment/Result/TXT/data_understanding_output.txt"
         df = filereader(manager.filename[10])
-        # aluno = "Pedro Lucas Ferreira Gomes"
-        # df = df[df['NomeAluno'].astype(str).str.strip().str.lower() == aluno.strip().lower()]
-        data_understanding_output(df, output_path)
-        outliers(df)
-        atribute_numeric(df, "Biologia")
-        atribute_categorical(df, "Pedro Lucas Ferreira Gomes" , "7º Ano")
+        data_understanding_output_one(df, manager)
+        outliers_one(df)
+        atribute_numeric_one(df, "2024_1ª Série_Matemática")
+        atribute_categorical_one(df, "Pedro Lucas Ferreira Gomes" , "7º Ano")
 
     except Exception as e:
         print(f"Error in data_understanding: {e}")
         raise
 
 # Insere os resultados da análise de entendimento dos dados em um arquivo de texto
-def data_understanding_output(df, output_path):
+def data_understanding_output_one(df, manager):
     try:
-        with open(output_path, "w", encoding="utf-8") as f:
+        with open(manager.filename[11], "w", encoding="utf-8") as f:
             f.write("Tipos de dados das colunas:\n")
             f.write(str(df.dtypes))
             f.write("\n\n")
@@ -50,7 +47,7 @@ def data_understanding_output(df, output_path):
         raise
 
 # Visualizar presença de outliers (valores fora do intervalo [0, 10])
-def outliers(df):
+def outliers_one(df):
     try:
         nota_columns = [col for col in df.columns if col != 'NomeAluno']
         invalid_percentages = {}
@@ -89,7 +86,7 @@ def outliers(df):
         raise
 
 # Visualizar atributos numéricos de um determinada disciplina
-def atribute_numeric(df, subject):
+def atribute_numeric_one(df, subject):
     try:
         subject_cols = [col for col in df.columns if subject in col]
         if not subject_cols:
@@ -115,7 +112,7 @@ def atribute_numeric(df, subject):
         raise
 
 # Visualizar atributos categóricos
-def atribute_categorical(df, studant, serie):
+def atribute_categorical_one(df, studant, serie):
     try:
         df = df[df['NomeAluno'].astype(str).str.strip().str.lower() == studant.strip().lower()]
         serie_cols = [col for col in df.columns if serie.strip().lower() in col.strip().lower()]
@@ -126,8 +123,8 @@ def atribute_categorical(df, studant, serie):
         disciplinas = {}
         for col in serie_cols:
             partes = col.split('_')
-            if len(partes) >= 2:
-                nome_disciplina = partes[1].strip()
+            if len(partes) >= 3:
+                nome_disciplina = partes[2].strip()
                 if nome_disciplina not in disciplinas:
                     disciplinas[nome_disciplina] = []
                 disciplinas[nome_disciplina].append(col)
