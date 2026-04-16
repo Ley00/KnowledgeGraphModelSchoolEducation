@@ -122,56 +122,6 @@ def get_student_averages(row):
     params = {col: row[col] for col in placeholders if col in row}
 
     return text(query), params
-    query = """
-    SELECT
-        :IDUnidade AS IDUnidade,
-        :NomeUnidade AS NomeUnidade,
-        :IDPeriodo AS IDPeriodo,
-        :NomePeriodo AS NomePeriodo,
-        :IDCurso AS IDCurso,
-        :NomeCurso AS NomeCurso,
-        :IDSerie AS IDSerie,
-        :NomeSerie AS NomeSerie,
-        :IDTurma AS IDTurma,
-        :ApelidoTurma AS ApelidoTurma,
-        :IDMatricula AS IDMatricula,
-        :SituacaoMatricula AS SituacaoMatricula,
-        :IDAluno AS IDAluno,
-        :NomeAluno AS NomeAluno,
-        Disciplinas.IDDisciplina,
-        Disciplinas.NomeDisciplina,
-        Etapas.IDEtapa,
-        Etapas.NomeEtapa,
-        Medias.IDMedia,
-        Medias.ValorMedia
-    FROM
-        Medias
-    INNER JOIN
-        EtapasxSeries ON Medias.IDEtapaxSerieMedia = EtapasxSeries.IDEtapaxSerie
-        AND EtapasxSeries.IDSerieEtapaxSerie = :IDSerie
-    INNER JOIN
-        Etapas ON EtapasxSeries.IDEtapaEtapaxSerie = Etapas.IDEtapa
-    INNER JOIN
-        MatriculasxDiciplinas ON MatriculasxDiciplinas.IDMatriculaMatriculaxDisciplina = :IDMatricula
-        AND MatriculasxDiciplinas.IDTurmaMatriculaxDisciplina = :IDTurma
-    INNER JOIN
-        DisciplinasxSeries ON MatriculasxDiciplinas.IDDisciplinaxSerieMatriculaxDisciplina = DisciplinasxSeries.IDDisciplinaxSerie
-        AND DisciplinasxSeries.IDSerieDisciplinaxSerie = :IDSerie
-    INNER JOIN
-        Disciplinas ON DisciplinasxSeries.IDDisciplinaDisciplinaxSerie = Disciplinas.IDDisciplina
-        AND Medias.IDDisciplinaxSerieMedia = DisciplinasxSeries.IDDisciplinaxSerie
-    WHERE
-        Medias.IDAlunoMedia = :IDAluno
-        AND Etapas.OrdemEtapa > 0 AND Etapas.OrdemEtapa < 5
-    ORDER BY 
-        Disciplinas.NomeDisciplina,
-        Etapas.OrdemEtapa
-    """
-
-    placeholders = set(re.findall(r":(\w+)", query))
-    params = {col: row[col] for col in placeholders if col in row}
-
-    return text(query), params
 
 #Consulta para buscar o pagamento
 def get_paid_student(row):
@@ -313,4 +263,48 @@ def get_student_absences(row):
     placeholders = set(re.findall(r":(\w+)", query))
     params = {col: row[col] for col in placeholders if col in row}
 
+    return text(query), params
+
+
+def get_teacher_assignments(row):
+    query = """
+    SELECT DISTINCT
+        Unidades.IDUnidade,
+        Unidades.NomeUnidade,
+        PeriodosLetivos.IDPeriodo,
+        PeriodosLetivos.NomePeriodo,
+        Cursos.IDCurso,
+        Cursos.NomeCurso,
+        Funcionarios.IDFuncionario,
+        Funcionarios.NomeFuncionario,
+        Disciplinas.IDDisciplina,
+        Disciplinas.NomeDisciplina
+    FROM PeriodosLetivos
+    INNER JOIN CursosxPeriodos
+        ON PeriodosLetivos.IDPeriodo = CursosxPeriodos.IDPeriodoCursoxPeriodo
+    INNER JOIN Cursos
+        ON CursosxPeriodos.IDCursoCursoxPeriodo = Cursos.IDCurso
+    INNER JOIN UnidadesxTiposCursos
+        ON Cursos.IDUnidadexTipoCursoCurso = UnidadesxTiposCursos.IDUnidadexTipoCurso
+    INNER JOIN Unidades
+        ON UnidadesxTiposCursos.IDUnidadeUnidadexTipoCurso = Unidades.IDUnidade
+    INNER JOIN FuncionariosxUnidades
+        ON Unidades.IDUnidade = FuncionariosxUnidades.IDUnidadeFuncionarioxUnidade
+    INNER JOIN Funcionarios
+        ON FuncionariosxUnidades.IDFuncionarioFuncionarioxUnidade = Funcionarios.IDFuncionario
+    INNER JOIN DisciplinasxFuncionarios
+        ON Funcionarios.IDFuncionario = DisciplinasxFuncionarios.IDFuncionarioDisciplinaxFuncionario
+    INNER JOIN Disciplinas
+        ON DisciplinasxFuncionarios.IDDisciplinaDisciplinaxFuncionario = Disciplinas.IDDisciplina
+    WHERE
+        Unidades.IDUnidade = :IDUnidade
+        AND PeriodosLetivos.IDPeriodo = :IDPeriodo
+        AND Cursos.IDCurso = :IDCurso
+    ORDER BY
+        Disciplinas.NomeDisciplina,
+        Funcionarios.NomeFuncionario
+    """
+
+    placeholders = set(re.findall(r":(\w+)", query))
+    params = {col: row[col] for col in placeholders if col in row}
     return text(query), params

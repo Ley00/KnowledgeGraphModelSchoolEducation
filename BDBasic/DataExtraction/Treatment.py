@@ -6,7 +6,7 @@ import numpy
 import pandas
 from Class import GraphManager
 from BDBasic.DataExtraction.File import filereader, savearchivestudent
-from BDBasic.DataExtraction.Views import get_paid_student, get_student, get_student_absences, get_student_averages, get_student_guardians
+from BDBasic.DataExtraction.Views import get_paid_student, get_student, get_student_absences, get_student_averages, get_student_guardians, get_teacher_assignments
 
 # Processamento de dados
 def process_data(session, manager:GraphManager, student_name, academicperiod, specific):
@@ -22,6 +22,18 @@ def process_data(session, manager:GraphManager, student_name, academicperiod, sp
             (5, get_student_guardians, guardianstreatment),
         ]:
             process_generic(session, manager.filename[1], manager.filename[key], view_func, treatment_func)
+
+        try:
+            process_unique_generic(
+                session,
+                manager.filename[1],
+                manager.filename[14],
+                get_teacher_assignments,
+                teachertreatment,
+                unique_columns=["IDUnidade", "NomeUnidade", "IDPeriodo", "NomePeriodo", "IDCurso", "NomeCurso"],
+            )
+        except Exception as teacher_error:
+            print(f"Warning: extraction of teacher assignments skipped: {teacher_error}")
 
     except Exception as e:
         print(f"Error in process_data: {e}")
@@ -67,6 +79,31 @@ def process_generic(session, input_file, output_file, view_func, treatment_func)
 
     except Exception as e:
         print(f"Error in process_generic ({output_file}): {e}")
+        raise
+
+
+def process_unique_generic(session, input_file, output_file, view_func, treatment_func, unique_columns):
+    try:
+        df = filereader(input_file)
+        result_list = []
+        unique_rows = df[unique_columns].drop_duplicates()
+
+        for _, row in unique_rows.iterrows():
+            query, params = view_func(row)
+            result = session.execute(query, params)
+            result_list.extend(result.fetchall())
+
+        if not result_list:
+            savearchivestudent(output_file, pandas.DataFrame())
+            return
+
+        processed_data = treatment_func(result.keys(), result_list)
+        columns = list(result.keys())
+        data = pandas.DataFrame(processed_data, columns=columns).drop_duplicates()
+        savearchivestudent(output_file, data)
+
+    except Exception as e:
+        print(f"Error in process_unique_generic ({output_file}): {e}")
         raise
 
 # Função para pré-processar os dados
@@ -138,4 +175,8 @@ def averagetreatment(columns, result_list):
 
 # Função de tratamento para faltas
 def absencestreatment(columns, result_list):
+    return preprocessdata(columns, result_list)
+
+
+def teachertreatment(columns, result_list):
     return preprocessdata(columns, result_list)

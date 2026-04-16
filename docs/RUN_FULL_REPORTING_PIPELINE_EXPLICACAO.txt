@@ -1,0 +1,455 @@
+EXPLICACAO DO RUN_FULL_REPORTING_PIPELINE
+KnowledgeGraphModelSchoolEducation
+
+1. O QUE E O run_full_reporting_pipeline
+
+A funcao run_full_reporting_pipeline fica no arquivo:
+
+/Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/pipeline.py
+
+Ela e a execucao principal da pipeline final do projeto.
+Seu objetivo e rodar de ponta a ponta a geracao dos resultados tecnicos e dos relatorios operacionais do TCC.
+
+Em vez de executar apenas um modelo isolado, ela faz tres grandes etapas:
+
+- executa o modo previsao_nota
+- executa o modo alerta_risco
+- gera os relatorios escolares integrados
+
+Na pratica, ela entrega a camada tecnica e a camada institucional em uma unica rotina.
+
+
+2. O QUE A FUNCAO EXECUTA INTERNAMENTE
+
+O fluxo interno da funcao e este:
+
+2.1. Executa run_real_pipeline no modo previsao_nota
+
+Esse modo e focado em prever numericamente a proxima nota do aluno.
+Ele usa, por padrao, min_history = 1.
+
+2.2. Executa run_real_pipeline no modo alerta_risco
+
+Esse modo e focado em detectar risco pedagogico de a proxima nota ficar abaixo de 6.
+Ele usa, por padrao, min_history = 2.
+
+2.3. Executa build_school_reports
+
+Depois que os dois modos geram seus artefatos, a funcao cruza os resultados e produz os relatorios finais voltados para:
+
+- professor
+- coordenacao
+- secretaria
+- ranking executivo da coordenacao
+
+2.4. Funcao resolve_mode_settings
+
+Essa funcao decide qual e o min_history padrao de cada modo quando esse valor nao e informado manualmente.
+Ela garante que:
+
+- previsao_nota use min_history = 1 por padrao
+- alerta_risco use min_history = 2 por padrao
+
+Esse comportamento existe porque os testes mostraram que o melhor historico minimo para regressao nao e o mesmo melhor historico minimo para classificacao.
+
+2.5. Funcao run_real_pipeline
+
+Essa funcao executa uma pipeline completa para um unico modo.
+Ela e usada duas vezes dentro do run_full_reporting_pipeline.
+
+Em ordem, ela faz:
+
+- resolve o modo e o min_history
+- monta os caminhos de entrada e saida com PipelinePaths
+- carrega as tabelas de origem
+- constroi o dataset temporal final de modelagem
+- seleciona quais colunas entram no modelo
+- treina e avalia os candidatos
+- salva os artefatos do modo
+- escreve o relatorio tecnico do modo
+
+Em outras palavras:
+
+- run_real_pipeline = pipeline tecnica de um unico objetivo
+- run_full_reporting_pipeline = orquestracao completa da solucao final
+
+2.6. Funcao build_school_reports
+
+Essa funcao fica em:
+
+/Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/reporting.py
+
+Ela e responsavel por pegar os resultados tecnicos dos dois modos e transformar isso em produtos finais para uso institucional.
+
+Ela executa as seguintes etapas:
+
+- carrega os artefatos de previsao_nota
+- carrega os artefatos de alerta_risco
+- une as duas bases em uma so estrutura operacional
+- calcula pontuacao de risco e nivel de risco
+- gera recomendacoes para professor, coordenacao e secretaria
+- gera o ranking executivo
+- salva as versoes em CSV e TXT
+
+
+3. FUNCOES MAIS IMPORTANTES DO ARQUIVO reporting.py
+
+3.1. _load_mode_artifacts
+
+Le os dois artefatos-base de um modo:
+
+- student_prediction_predictions.csv
+- student_prediction_dataset.csv
+
+Ela e a funcao que busca a materia-prima dos relatorios.
+
+3.2. _prepare_combined_predictions
+
+Essa e uma das funcoes mais importantes da camada de relatorios.
+Ela cruza os resultados dos modos previsao_nota e alerta_risco em uma unica base integrada.
+
+Nessa etapa sao feitos:
+
+- uniao das predições dos dois modos
+- reincorporacao de faltas, pagamentos e professor
+- calculo da variacao prevista
+- calculo da pontuacao de risco
+- classificacao do nivel_risco
+- criacao de fatores de alerta e recomendacoes
+
+Essa funcao gera a base operacional que depois sera desdobrada em relatorios especificos.
+
+3.3. _calculate_risk_score
+
+Calcula a pontuacao composta de risco.
+Essa pontuacao foi criada para evitar uma regra simples demais de alto risco.
+
+Ela combina:
+
+- risco previsto pelo classificador
+- nota prevista
+- nota atual
+- tendencia de queda
+- faltas acumuladas
+- pendencias financeiras
+
+Esse score e usado para:
+
+- decidir se o caso e baixo, moderado ou alto
+- ordenar melhor os alunos mais graves
+- alimentar o ranking executivo
+
+3.4. _build_teacher_report
+
+Pega a base integrada e extrai apenas as colunas relevantes para o professor.
+O resultado e um relatorio por aluno, disciplina e etapa.
+
+3.5. _build_coordinator_report
+
+Agrupa a base por serie e disciplina.
+Seu objetivo e ajudar a coordenacao a identificar grupos criticos, e nao apenas casos individuais.
+
+3.6. _build_secretary_report
+
+Consolida sinais administrativos por aluno.
+O foco aqui nao e a disciplina, mas o aluno em termos de faltas, financeiro e prioridade administrativa.
+
+3.7. _build_executive_ranking
+
+Gera um ranking por aluno e periodo.
+Essa funcao transforma varios sinais dispersos em:
+
+- indice_prioridade
+- nivel_prioridade_executiva
+- motivos_prioridade
+- acao_executiva_sugerida
+
+Esse e o arquivo mais gerencial da arquitetura.
+
+3.8. _write_text_summaries
+
+Gera as versoes TXT dos relatorios.
+Essas versoes sao importantes para:
+
+- leitura rapida
+- documentacao
+- apresentacao do TCC
+- consulta sem abrir planilhas
+
+
+4. ARQUIVOS GERADOS PELO MODO previsao_nota
+
+Pasta:
+
+/Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result/previsao_nota
+
+4.1. student_prediction_dataset.csv
+
+Esse arquivo e a base final usada para treino, validacao e teste do modo previsao_nota.
+Cada linha representa uma observacao temporal do aluno, com notas anteriores, faltas, pagamentos e outros atributos.
+Ele e o dataset de trabalho da regressao da proxima nota.
+
+4.2. student_prediction_model.pkl
+
+Esse arquivo e o modelo salvo do modo previsao_nota.
+Ele guarda o modelo final escolhido e os metadados principais da execucao.
+Serve para reaproveitar o modelo sem precisar treinar novamente.
+
+4.3. student_prediction_predictions.csv
+
+Esse arquivo traz as previsoes feitas no conjunto de teste do modo previsao_nota.
+Mostra a nota atual, a nota real seguinte, a nota prevista, o baseline e os erros por registro.
+E o arquivo mais importante para inspecionar como o modelo se comportou linha a linha.
+
+4.4. student_prediction_report.txt
+
+Esse arquivo e o relatorio tecnico completo do modo previsao_nota.
+Traz resumo do dataset, split temporal, candidatos comparados, metricas finais e principais pontos de erro.
+E o melhor arquivo para entender o desempenho geral do modo de previsao numerica.
+
+4.5. error_analysis_by_subject.csv
+
+Analise de erro por disciplina no modo previsao_nota.
+Mostra onde o modelo erra mais em termos de MAE e acuracia de risco.
+Ajuda a identificar materias com maior dificuldade preditiva.
+
+4.6. error_analysis_by_series.csv
+
+Analise de erro por serie escolar no modo previsao_nota.
+Permite ver em quais anos ou niveis escolares o modelo sofre mais.
+E util para discutir estabilidade do modelo por etapa escolar.
+
+4.7. error_analysis_by_score_band.csv
+
+Analise de erro por faixa de nota no modo previsao_nota.
+Mostra se o sistema erra mais em notas baixas, medias ou altas.
+Ajuda a entender se o modelo tem mais dificuldade justamente nos alunos criticos.
+
+4.8. error_analysis_summary.txt
+
+Resumo textual da analise de erro do modo previsao_nota.
+Condensa as principais disciplinas, series e faixas mais problematicas.
+E uma leitura rapida da parte diagnostica do modelo.
+
+
+5. ARQUIVOS GERADOS PELO MODO alerta_risco
+
+Pasta:
+
+/Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result/alerta_risco
+
+4.1. student_prediction_dataset.csv
+
+Esse arquivo e a base final usada no modo alerta_risco.
+Ele tem estrutura semelhante ao dataset da previsao_nota, mas aqui o foco principal e o alvo binario de risco.
+E a base usada para classificar se a proxima nota entra ou nao em zona critica.
+
+4.2. student_prediction_model.pkl
+
+Arquivo com o modelo salvo do modo alerta_risco.
+Guarda o classificador final escolhido e os metadados principais da rodada.
+Permite reaproveitar a solucao final deste modo.
+
+4.3. student_prediction_predictions.csv
+
+Esse arquivo traz as previsoes do conjunto de teste do modo alerta_risco.
+Mostra para cada registro o risco real, o risco previsto, a nota prevista e o erro.
+E o arquivo ideal para analisar acertos e falhas caso a caso.
+
+4.4. student_prediction_report.txt
+
+Relatorio tecnico completo do modo alerta_risco.
+Apresenta tamanho da base, divisao temporal, candidatos, metricas de classificacao e resumo dos principais erros.
+E a fonte principal para defender o desempenho do classificador de risco.
+
+4.5. error_analysis_by_subject.csv
+
+Analise de erro por disciplina no modo alerta_risco.
+Mostra em quais materias o classificador tem maior dificuldade.
+Ajuda a direcionar ajustes futuros na engenharia de atributos.
+
+4.6. error_analysis_by_series.csv
+
+Analise de erro por serie no modo alerta_risco.
+Mostra onde o sistema de alerta funciona melhor ou pior conforme o nivel escolar.
+E util para leitura institucional por segmento.
+
+4.7. error_analysis_by_score_band.csv
+
+Analise de erro por faixa de nota no modo alerta_risco.
+Permite avaliar se a classificacao de risco perde qualidade em certas zonas de desempenho.
+E especialmente importante para entender o comportamento perto do corte 6,0.
+
+4.8. error_analysis_summary.txt
+
+Resumo textual da analise de erro do modo alerta_risco.
+Traz os principais pontos de fragilidade do classificador em linguagem direta.
+Facilita leitura sem abrir todos os CSVs de erro.
+
+
+6. ARQUIVOS GERADOS EM relatorios_escolares
+
+Pasta:
+
+/Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result/relatorios_escolares
+
+Essa pasta e a camada final e operacional do sistema.
+Ela nao e mais focada em treino de modelo, e sim em transformar previsoes em informacao usavel pela escola.
+
+5.1. relatorio_escolar_integrado.csv
+
+Esse e o arquivo-base integrado dos relatorios.
+Ele junta resultados de previsao_nota e alerta_risco com faltas, pagamentos, pontuacao de risco e recomendacoes.
+E a base mais completa da camada operacional.
+
+5.2. relatorio_professor.csv
+
+Relatorio detalhado para uso do professor.
+Mostra aluno, disciplina, etapa, nota atual, nota prevista, pontuacao de risco, fatores de alerta e recomendacao pedagogica.
+Serve para ajustar abordagem em sala e acompanhar casos individuais.
+
+5.3. relatorio_professor.txt
+
+Versao textual resumida do relatorio do professor.
+Lista os casos mais prioritarios em formato facil de leitura.
+E util para consulta rapida ou anexacao em material de reuniao.
+
+5.4. relatorio_coordenacao.csv
+
+Relatorio de coordenacao por agrupamento de serie e disciplina.
+Mostra alunos monitorados, casos de alto risco, taxa de alto risco, medias previstas e recomendacao de encaminhamento.
+Serve para identificar grupos criticos e definir acoes coletivas.
+
+5.5. relatorio_coordenacao.txt
+
+Versao textual do relatorio da coordenacao.
+Resume os agrupamentos mais criticos em linguagem direta.
+Facilita leitura gerencial sem abrir planilhas.
+
+5.6. relatorio_secretaria.csv
+
+Relatorio para a secretaria com foco administrativo.
+Mostra faltas altas, pendencias financeiras, quantidade de disciplinas monitoradas e prioridade da secretaria.
+Serve para orientar contato preventivo e acompanhamento administrativo.
+
+5.7. relatorio_secretaria.txt
+
+Versao textual do relatorio da secretaria.
+Resume os casos que exigem acao administrativa mais rapida.
+Ajuda no uso operacional diario.
+
+5.8. ranking_executivo_coordenacao.csv
+
+Ranking consolidado por aluno e periodo para a coordenacao.
+Junta risco pedagogico, faltas, financeiro, numero de disciplinas criticas e indice de prioridade.
+Serve para decidir por onde a coordenacao deve comecar a intervencao.
+
+5.9. ranking_executivo_coordenacao.txt
+
+Versao textual do ranking executivo.
+Lista os alunos mais urgentes com justificativa resumida e acao sugerida.
+E uma das saidas mais importantes para apresentacao institucional do sistema.
+
+
+7. ARQUIVOS error, history e student NA RAIZ DE TCCPipeline/Result
+
+Pasta:
+
+/Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result
+
+Esses arquivos sao artefatos legados da fase anterior a separacao definitiva entre os modos previsao_nota e alerta_risco.
+Hoje eles existem principalmente como historico da evolucao do projeto.
+
+6.1. error_analysis_by_subject.csv
+
+Versao antiga da analise de erro por disciplina.
+Foi gerada quando a pipeline ainda estava unificada em uma unica execucao.
+Hoje o uso principal esta nas versoes de cada modo.
+
+6.2. error_analysis_by_series.csv
+
+Versao antiga da analise de erro por serie.
+Permanece como registro historico do desenvolvimento.
+Nao e a fonte principal da arquitetura atual.
+
+6.3. error_analysis_by_score_band.csv
+
+Versao antiga da analise de erro por faixa de nota.
+Serve mais como comparacao historica com a pipeline anterior.
+As versoes por modo sao mais atualizadas.
+
+6.4. error_analysis_summary.txt
+
+Resumo textual antigo da analise de erro.
+Foi mantido para preservar a trilha de evolucao do projeto.
+Hoje a referencia principal esta nas subpastas dos modos.
+
+6.5. history_min_comparison.csv
+
+Arquivo da comparacao entre cortes de historico minimo.
+Mostra o desempenho de min_history = 1, 2 e 3.
+Foi usado para justificar por que previsao_nota usa 1 e alerta_risco usa 2.
+
+6.6. history_min_comparison.txt
+
+Versao textual da comparacao de historico minimo.
+Resume os melhores cortes observados para regressao e classificacao.
+E importante para a defesa metodologica do TCC.
+
+6.7. student_prediction_dataset.csv
+
+Dataset legado da fase em que a pipeline ainda nao estava separada por modos.
+Hoje foi substituido pelos datasets especificos de previsao_nota e alerta_risco.
+Permanece como historico tecnico.
+
+6.8. student_prediction_model.pkl
+
+Modelo legado salvo antes da separacao da arquitetura atual.
+Nao e o principal modelo em uso hoje.
+Foi mantido para preservar a rastreabilidade do projeto.
+
+6.9. student_prediction_predictions.csv
+
+Predicoes legadas da pipeline unificada antiga.
+Hoje sua funcao principal e historica e comparativa.
+As predicoes atuais de referencia estao nas subpastas dos modos.
+
+6.10. student_prediction_report.txt
+
+Relatorio tecnico legado da fase anterior.
+Mostra o desempenho da versao unificada mais antiga da pipeline.
+Serve para demonstrar a evolucao do projeto ao longo da refatoracao.
+
+
+8. COMO LER O CÓDIGO DA PIPELINE DE FORMA MAIS FACIL
+
+Se a ideia for abrir o codigo e entender o fluxo sem se perder, a ordem mais recomendada e:
+
+1. abrir TCCPipeline/pipeline.py
+2. ler run_full_reporting_pipeline
+3. ler run_real_pipeline
+4. abrir TCCPipeline/reporting.py
+5. ler build_school_reports
+6. ler _prepare_combined_predictions
+7. ler _build_teacher_report, _build_coordinator_report, _build_secretary_report e _build_executive_ranking
+
+Essa ordem ajuda porque vai do mais geral para o mais detalhado.
+
+9. RESUMO FINAL DO PAPEL DO run_full_reporting_pipeline
+
+Em termos simples, o run_full_reporting_pipeline faz o seguinte:
+
+- gera os resultados tecnicos de previsao numerica da proxima nota
+- gera os resultados tecnicos de classificacao de risco pedagogico
+- cruza esses resultados e monta relatorios finais para a escola
+
+Portanto, ele e a funcao que transforma:
+
+- dados tratados
+- modelos treinados
+- previsoes numericas
+- alertas de risco
+
+em produtos finais de uso institucional.
+
+Ele e, hoje, a principal funcao da arquitetura final do TCC.

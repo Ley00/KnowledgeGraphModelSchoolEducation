@@ -1,0 +1,75 @@
+PIPELINE REAL DE PREDICAO ESCOLAR
+
+Modo de execução: previsao_nota
+Resumo do dataset
+- linhas para modelagem: 106721
+- alunos unicos: 1378
+- disciplinas unicas: 53
+- anos letivos unicos: 6
+
+Split temporal
+- anos de treino: [2020, 2021, 2022, 2023]
+- anos de validacao: [2024]
+- anos de teste: [2025]
+- linhas de treino: 52759
+- linhas de validacao: 27435
+- linhas de teste: 26527
+- historico minimo por disciplina para entrar na modelagem: 1
+- candidato selecionado para regressao: model::hist_gradient_boosting_regressor
+- candidato selecionado para classificacao: baseline::media_duas_ultimas
+
+Ranking de regressao na validacao (ordenado por mae)
+- hist_gradient_boosting_regressor: mae=0.7968, rmse=1.0773, acerto<=0.5=0.4324
+- random_forest_regressor: mae=0.8169, rmse=1.0919, acerto<=0.5=0.4242
+- baseline::ultima_nota: mae=0.9148, rmse=1.3015, acerto<=0.5=0.4531
+- baseline::media_duas_ultimas: mae=0.9154, rmse=1.2823, acerto<=0.5=0.4356
+- baseline::media_tres_ultimas: mae=0.9154, rmse=1.2823, acerto<=0.5=0.4356
+- baseline::baseline_hibrido: mae=0.9517, rmse=1.2263, acerto<=0.5=0.3478
+
+Ranking de classificacao na validacao (ordenado por f1)
+- baseline::media_duas_ultimas: precision=0.7011, recall=0.7744, f1=0.7359
+- baseline::media_tres_ultimas: precision=0.7011, recall=0.7744, f1=0.7359
+- baseline::ultima_nota: precision=0.7173, recall=0.7552, f1=0.7358
+- baseline::baseline_hibrido: precision=0.7878, recall=0.6855, f1=0.7331
+- hist_gradient_boosting_classifier: precision=0.6118, recall=0.8927, f1=0.7260
+- random_forest_classifier: precision=0.5869, recall=0.9070, f1=0.7127
+
+Analise de erro
+- por disciplina: /Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result/previsao_nota/error_analysis_by_subject.csv
+- por serie: /Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result/previsao_nota/error_analysis_by_series.csv
+- por faixa de nota: /Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result/previsao_nota/error_analysis_by_score_band.csv
+- resumo textual: /Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result/previsao_nota/error_analysis_summary.txt
+
+Principais pontos de erro
+- disciplina critica: Matemática 3 | samples=163 | mae=1.4562 | risk_accuracy=0.6871
+- disciplina critica: Matemática 4 e 5 | samples=163 | mae=1.4138 | risk_accuracy=0.8589
+- disciplina critica: Biologia 2 | samples=521 | mae=1.2866 | risk_accuracy=0.7006
+- disciplina critica: História 2 | samples=163 | mae=1.1907 | risk_accuracy=0.8834
+- disciplina critica: Matemática 1 e 2 | samples=163 | mae=1.1333 | risk_accuracy=0.8957
+- serie critica: 9º Ano | samples=3698 | mae=0.8493 | risk_accuracy=0.8437
+- serie critica: 3ª Série | samples=5053 | mae=0.8443 | risk_accuracy=0.8698
+- serie critica: 2ª Série | samples=4756 | mae=0.8399 | risk_accuracy=0.8522
+- faixa critica: abaixo_6 | samples=5756 | mae=1.0197 | risk_accuracy=0.7510
+- faixa critica: 6_a_6_99 | samples=3063 | mae=0.8870 | risk_accuracy=0.6941
+- faixa critica: 7_a_7_99 | samples=3476 | mae=0.8145 | risk_accuracy=0.8708
+
+Regressao: previsao da proxima nota
+- modelo mae: 0.7601
+- modelo rmse: 1.0434
+- modelo acerto <= 0.5: 0.4613
+- baseline mae: 0.9138
+- baseline rmse: 1.2967
+- baseline acerto <= 0.5: 0.4443
+
+Classificacao: risco de proxima nota abaixo de 6
+- modelo precision: 0.7195
+- modelo recall: 0.7510
+- modelo f1: 0.7350
+- baseline precision: 0.7123
+- baseline recall: 0.7385
+- baseline f1: 0.7252
+
+Arquivos gerados
+- dataset: /Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result/previsao_nota/student_prediction_dataset.csv
+- predições: /Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result/previsao_nota/student_prediction_predictions.csv
+- modelo: /Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result/previsao_nota/student_prediction_model.pkl

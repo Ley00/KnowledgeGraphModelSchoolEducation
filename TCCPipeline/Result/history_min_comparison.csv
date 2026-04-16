@@ -1,0 +1,4 @@
+min_history,status,error,dataset_rows,train_rows,validation_rows,test_rows,selected_regression,selected_classification,regression_mae,regression_rmse,regression_acc_half,regression_baseline_mae,classification_precision,classification_recall,classification_f1,classification_baseline_f1
+1,ok,,106721,52759,27435,26527,model::hist_gradient_boosting_regressor,baseline::media_duas_ultimas,0.7600615642838076,1.0433621774293136,0.46126588004674485,0.9138161118860031,0.7195406125166445,0.7510423905489924,0.7349540972458347,0.72517911975435
+2,ok,,50065,23134,13688,13243,model::hist_gradient_boosting_regressor,model::hist_gradient_boosting_classifier,0.8045151256174771,1.1006300715871116,0.44204485388507136,0.9405195197462811,0.6539923954372624,0.8618468146027202,0.74366893143916,0.7243299686738601
+3,error,A pipeline precisa de pelo menos dois anos letivos para validacao temporal.,0,0,0,0,,,,,,,,,,

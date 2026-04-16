@@ -37,7 +37,8 @@ class GraphManager:
             10: os.path.join(self.folder2, "media_nota_aluno_single_line.csv"),
             11: os.path.join(self.folder2, "data_understanding_report.txt"),
             12: os.path.join(self.folder2, "model_evaluation_report.txt"),
-            13: os.path.join(self.folder2, "random_forest_model.pkl")
+            13: os.path.join(self.folder2, "random_forest_model.pkl"),
+            14: os.path.join(csv_dir, "professor_disciplina.csv"),
         }
 
         self.data_types = [
@@ -45,7 +46,8 @@ class GraphManager:
             (2, "Grade", "has_grade", "IDMedia", "IDMatricula"),
             (3, "Payment", "made_payment", "IDMovimento", "IDMatricula"),
             (4, "Absence", "has_absence", "IDFalta", "IDMatricula"),
-            (5, "Responsible", "responsible_for", "IDResponsavel", "IDMatricula")
+            (5, "Responsible", "responsible_for", "IDResponsavel", "IDMatricula"),
+            (14, "TeacherAssignment", "teaches", "IDFuncionario", "IDDisciplina"),
         ]
 
         # Campos utilizadas para os modelos

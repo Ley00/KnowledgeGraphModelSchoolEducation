@@ -10,6 +10,8 @@ dependencies = [
     'pandas', 
     'scikit-learn', 
     'matplotlib',
+    'plotly',
+    'streamlit',
     'torch', 
     'torchvision', 
     'torchaudio',

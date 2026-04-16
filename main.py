@@ -4,6 +4,7 @@ from BDBasic.Test.CorrelationAnalysis import correlation_analysis
 from setup import verify_dependencies
 from DataAccess import create_session
 from BDBasic.DataExtraction.Treatment import process_data
+from BDBasic.DataExtraction.DatabaseMaintenance import prepare_updated_database
 from BDBasic.KnotAndEdges.Graph import graphnode
 from BDBasic.KnotAndEdges.ConsultNetPy import consult_student_networkx, consult_student_pytorch, draw_graph
 from BDBasic.Processing.LSTM import lstm
@@ -11,14 +12,13 @@ from BDBasic.Test.ClassificationModel import classifiers_comparison_mf
 from BDTreatment.DataExtraction.DataUnderstanding import data_understanding_one
 from BDTreatment.DataExtraction.Treatment import process_data_one, check_student_grade_one
 from BDTreatment.Processing.RandomForest import random_forest_one
+from TCCPipeline import run_full_reporting_pipeline, run_real_pipeline
 
 def main():
     session = None
     try:
         # Deixe descomentado apenas quando precisar instalar ou verificar se as bibliotecas estão atualizadas.
         # verify_dependencies()
-        
-        session = create_session("Warley")
 
         specific = False  # Aluno específico
         academicperiod = "2024"
@@ -27,8 +27,16 @@ def main():
 
         manager = GraphManager()
 
+        # Tratamento do banco atualizado
+        # Rode apenas quando um novo banco for importado/atualizado.
+        # A função tenta renomear o banco importado para COLEGIO_TESTE,
+        # remove tabelas inúteis, anonimiza alunos e reorganiza o banco.
+        # prepare_updated_database("Warley")
+
         # BDBASIC
         # Extração dos dados para CSV
+        # Requer conexão com o banco:
+        # session = create_session("Warley")
         # process_data(session, manager, student_name, academicperiod, specific)
 
         # Análise de correlação
@@ -59,78 +67,20 @@ def main():
         # check_student_grade_one(manager)
         # data_understanding_one(manager)
 
-        random_forest_one(manager)
+        # Pipeline completa orientada ao objetivo do TCC:
+        # roda previsão de nota, alerta de risco e gera relatórios finais
+        # para professor, coordenação e secretaria.
+        run_full_reporting_pipeline(".")
 
-        '''
-        PRÉ-PROCESSAMENTO DOS DADOS
-        1 - Processamento dos atributos ✅
-        → Preparar os dados brutos para o modelo, convertendo para tensores e separando X (entrada) e y (saída).
+        # Pipeline real refatorada a partir dos CSVs já extraídos
+        # Modo focado em previsão numérica da próxima nota
+        # run_real_pipeline(".", mode="previsao_nota")
 
-        2 - Normalização dos dados ✅
-        → Escalar os valores dos atributos para uma mesma faixa, o que acelera o aprendizado.
+        # Modo focado em alerta pedagógico de risco
+        # run_real_pipeline(".", mode="alerta_risco")
 
-        3 - Padronização de sequências ✅
-        → Ajustar todas as sequências para o mesmo tamanho via padding e, se possível, usar pack_padded_sequence.
-
-        4 - Embeddings ✅
-        → Cada categoria vira um vetor denso treinável, permitindo que o modelo aprenda representações mais ricas.
-
-        5 - Enriquecimento de atributos
-        → Criar atributos derivados (ex: tendência de nota) que ajudam o modelo a aprender padrões mais profundos.
-
-        
-        DEFINIÇÃO DO MODELO
-        1 - Primeira camada ✅
-        → Camada inicial LSTM que processa sequências temporais dos dados.
-
-        2 - Bidirectional LSTM
-        → Torna a LSTM capaz de olhar para frente e para trás na sequência, melhorando o contexto.
-
-        3 - Segunda camada ✅
-        → Outra LSTM empilhada ou uma Linear que conecta a saída da LSTM com a próxima etapa.
-
-        3 - Camadas adicionais (Dropout / BatchNorm)
-        → Ajudam na regularização e estabilidade durante o treinamento.
-
-        4 - Camada de ativação ✅
-        → Aplica função não-linear (ex: ReLU ou Sigmoid) após camadas lineares para modelar relações complexas.
-
-        5 - Attention Mechanism
-        → Foca nas partes mais importantes da sequência ao invés de usar apenas o último hidden state.
-
-        6 - Camada de pooling
-        → (Opcional) Agrega informações ao longo da sequência, ex: média ou max pooling.
-
-        7 - Custom Output Heads
-        → Camadas de saída adaptadas para múltiplos alvos ou tarefas, como prever nota e comportamento.
-
-        8 - Camada de saída ✅
-        → Última camada linear que transforma os dados na dimensão da predição desejada.
-
-        
-        TREINAMENTO
-        1 - Otimizador e a função de perda ✅
-        → Define como os erros são calculados e como o modelo é ajustado a cada batch (ex: Adam + MSELoss).
-
-        2 - Função de treinamento ✅
-        → Loop que percorre batches, calcula perda, backpropagation e aplica o otimizador.
-
-        3 - Early Stopping
-        → Interrompe o treinamento se a validação parar de melhorar, evitando overfitting.
-
-        4 - Scheduler de taxa de aprendizado
-        → Ajusta automaticamente o learning rate para melhorar convergência.
-
-        5 - Cross-validation (K-Fold)
-        → Técnica de validação cruzada que melhora a avaliação do modelo em datasets pequenos.
-
-        6 - Loop de treinamento e avaliação no final do treinamento
-        → Executa o treinamento por várias épocas e avalia no final com métricas específicas.
-
-        7 - Função de avaliação
-        → Mede o desempenho do modelo em dados de teste, sem ajustar pesos.
-        '''
-        
+        # Fluxo tabular legado
+        # random_forest_one(manager)
     except Exception as e:
         print(f"Error: {e}")
     finally:
