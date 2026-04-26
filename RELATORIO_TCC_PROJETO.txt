@@ -1,0 +1,35 @@
+Data: 2026-04-25
+Tipo: criacao de diagramas da arquitetura e do fluxo de treinamento e inferencia
+Arquivos afetados:
+- diagrama/diagrama_arquitetural.md
+- diagrama/fluxo_treinamento_inferencia.md
+Resumo:
+- foi criado um diagrama arquitetural com a organizacao atual do projeto em torno de CLI, banco, pipeline, artefatos e dashboard
+- foi criado um diagrama de fluxo separado para treinamento e inferencia, mostrando desde a leitura dos CSVs ate a geracao dos relatorios escolares e consumo pelo dashboard
+- os diagramas foram escritos em Mermaid para facilitar uso em monografia, apresentacao e documentacao tecnica
+Proximo passo sugerido:
+- se desejar, esses diagramas podem ser transformados em figuras estaticas ou incorporados diretamente na monografia com legenda e numeracao
+
+Data: 2026-04-25
+Tipo: geracao das versoes SVG dos diagramas
+Arquivos afetados:
+- diagrama/diagrama_arquitetural.svg
+- diagrama/fluxo_treinamento_inferencia.svg
+Resumo:
+- os diagramas em Mermaid foram convertidos para SVG com Mermaid CLI para facilitar uso em documentos, slides e monografia
+- a geracao preservou a representacao vetorial, permitindo redimensionamento sem perda de qualidade
+- os arquivos foram colocados na pasta diagrama para manter consistencia com os demais materiais visuais do projeto
+Proximo passo sugerido:
+- se desejar, posso agora incorporar esses SVGs diretamente na monografia ou gerar uma versao PNG para uso em apresentacoes
+
+Data: 2026-04-25
+Tipo: redesenho visual dos diagramas SVG para alinhamento estético
+Arquivos afetados:
+- diagrama/diagrama_arquitetural.svg
+- diagrama/fluxo_treinamento_inferencia.svg
+Resumo:
+- os dois SVGs gerados automaticamente foram refeitos manualmente para seguir a mesma linguagem visual dos diagramas anteriores do projeto
+- o redesenho alinhou tipografia, cores, caixas arredondadas, agrupamento por seção e estilo de setas ao padrão já existente em fluxo_detalhado.svg e fluxo_simples_modelagem.svg
+- com isso, os diagramas novos ficaram mais consistentes para uso em monografia, documentação e defesa
+Proximo passo sugerido:
+- se desejar, posso agora revisar o encaixe visual desses diagramas no documento final da monografia e sugerir legendas e títulos acadêmicos

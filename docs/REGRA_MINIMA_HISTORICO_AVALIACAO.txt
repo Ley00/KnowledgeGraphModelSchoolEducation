@@ -12,7 +12,7 @@ Base tecnica da regra
 - o corte min_history = 3 reduziu demais a base disponivel e inviabilizou a validacao temporal nesta rodada
 
 Referencia dos testes
-- arquivo: /Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/TCCPipeline/Result/history_min_comparison.txt
+- arquivo: /Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/artifacts/pipeline/previsao_nota/history_min_comparison.txt
 
 Regra proposta para uso no TCC
 

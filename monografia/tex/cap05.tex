@@ -1,0 +1,126 @@
+\chapter{Modelagem, Relat\'orios e Resultados}
+\label{cap:resultados}
+
+\section{Modelos candidatos e crit\'erios de sele\c{c}\~ao}
+\label{sec:candidatos}
+
+Os modelos candidatos avaliados na pipeline foram:
+
+\begin{itemize}
+    \item \textit{RandomForestRegressor};
+    \item \textit{RandomForestClassifier};
+    \item \textit{HistGradientBoostingRegressor};
+    \item \textit{HistGradientBoostingClassifier}.
+\end{itemize}
+
+Al\'em deles, foram mantidos baselines determin\'isticos baseados em:
+
+\begin{itemize}
+    \item \'ultima nota;
+    \item m\'edia das duas \'ultimas notas;
+    \item m\'edia das tr\^es \'ultimas notas;
+    \item baseline h\'ibrido.
+\end{itemize}
+
+Essa decis\~ao fortaleceu a honestidade experimental do projeto: o modelo mais sofisticado s\'o foi mantido quando realmente superou solu\c{c}\~oes simples.
+
+\section{M\'etricas}
+\label{sec:metricas}
+
+Para regress\~ao, o crit\'erio principal de sele\c{c}\~ao foi o \sigla{MAE}{Mean Absolute Error}. Tamb\'em foram observados o \sigla{RMSE}{Root Mean Squared Error} e a propor\c{c}\~ao de previs\~oes com erro absoluto menor ou igual a 0,5 ponto. Para classifica\c{c}\~ao de risco, o crit\'erio principal foi o \sigla{F1}{F1-score}, acompanhado de \textit{precision} e \textit{recall}.
+
+Essas m\'etricas foram escolhidas porque refletem o uso pretendido do sistema. Em contexto escolar, o importante n\~ao \'e apenas aproximar numericamente a nota, mas tamb\'em recuperar a maior parte dos alunos que realmente entrar\~ao em faixa cr\'itica.
+
+\section{Resultados do modo de previs\~ao de nota}
+\label{sec:prev-nota}
+
+No modo \texttt{previsao\_nota}, o melhor cen\'ario foi obtido com hist\'orico m\'inimo igual a 1. A base de modelagem alcan\c{c}ou 106.721 linhas, 1.378 alunos \'unicos, 53 disciplinas e 6 anos letivos considerados. O conjunto temporal foi organizado com treino em anos anteriores, valida\c{c}\~ao em 2024 e teste em 2025.
+
+O melhor candidato de regress\~ao foi o \textit{HistGradientBoostingRegressor}, com os seguintes resultados no teste:
+
+\begin{table}[ht]
+\caption{Resultados do modo de previs\~ao de nota.}
+\label{tab:prevnota}
+\centering
+\begin{tabular}{l c}
+\hline
+\textbf{M\'etrica} & \textbf{Valor} \\
+\hline
+MAE & 0,7601 \\
+RMSE & 1,0434 \\
+Acerto com erro $\leq$ 0,5 & 0,4613 \\
+MAE do baseline de \'ultima nota & 0,9138 \\
+\hline
+\end{tabular}
+\fontetab{Elaborada pelo autor com base nos artefatos da pipeline.}
+\end{table}
+
+Em termos pr\'aticos, isso significa que a previs\~ao da pr\'oxima nota ficou, em m\'edia, a menos de um ponto da nota realmente observada, superando de forma consistente a heur\'istica simples de repetir a nota anterior.
+
+\section{Resultados do modo de alerta de risco}
+\label{sec:alerta-risco}
+
+No modo \texttt{alerta\_risco}, o melhor cen\'ario foi obtido com hist\'orico m\'inimo igual a 2. Nessa configura\c{c}\~ao, a base de modelagem alcan\c{c}ou 50.065 linhas, 1.179 alunos \'unicos e 53 disciplinas. O melhor classificador foi o \textit{HistGradientBoostingClassifier}, com os resultados apresentados na Tabela~\ref{tab:riscos}.
+
+\begin{table}[ht]
+\caption{Resultados do modo de alerta de risco.}
+\label{tab:riscos}
+\centering
+\begin{tabular}{l c}
+\hline
+\textbf{M\'etrica} & \textbf{Valor} \\
+\hline
+Precision & 0,6540 \\
+Recall & 0,8618 \\
+F1 & 0,7437 \\
+F1 do baseline & 0,7243 \\
+\hline
+\end{tabular}
+\fontetab{Elaborada pelo autor com base nos artefatos da pipeline.}
+\end{table}
+
+O destaque est\'a no \textit{recall}. Em um sistema de alerta, perder casos realmente cr\'iticos tende a ser mais grave do que sinalizar alguns casos adicionais para acompanhamento. Por isso, esse resultado foi considerado adequado ao objetivo pedag\'ogico do trabalho.
+
+\section{Comparando hist\'oricos m\'inimos}
+\label{sec:minhistory}
+
+Os testes de hist\'orico m\'inimo mostraram um resultado relevante para a arquitetura do projeto:
+
+\begin{itemize}
+    \item \texttt{min\_history = 1} foi melhor para regress\~ao;
+    \item \texttt{min\_history = 2} foi melhor para classifica\c{c}\~ao de risco;
+    \item \texttt{min\_history = 3} inviabilizou a valida\c{c}\~ao temporal na rodada analisada.
+\end{itemize}
+
+Essa evid\^encia levou \`a separa\c{c}\~ao da pipeline em dois modos complementares de uso, cada um com sua configura\c{c}\~ao mais adequada.
+
+\section{Gera\c{c}\~ao de relat\'orios escolares}
+\label{sec:relatorios}
+
+Os resultados preditivos n\~ao foram o ponto final da solu\c{c}\~ao. A partir deles, o projeto passou a gerar relat\'orios para tr\^es perfis institucionais:
+
+\begin{itemize}
+    \item professor: com nota atual, nota prevista, fatores de alerta e recomenda\c{c}\~ao pedag\'ogica;
+    \item coordena\c{c}\~ao: com vis\~ao por s\'erie, disciplina e ranking executivo;
+    \item secretaria: com sinais administrativos relacionados a frequ\^encia e financeiro.
+\end{itemize}
+
+Tamb\'em foram constru\'idos relat\'orios por professor, incluindo consolidados por turma e consolidados gerais, com contagem de alunos em risco baixo, moderado e alto.
+
+\section{An\'alise de erro e calibra\c{c}\~ao}
+\label{sec:erro}
+
+A an\'alise de erro mostrou maior dificuldade de previs\~ao em disciplinas como Biologia, Matem\'atica segmentada, Hist\'oria 2 e Qu\'imica 3, al\'em de faixas de nota abaixo de 7. Esse achado foi importante porque mostra que os casos mais inst\'aveis s\~ao tamb\'em os mais relevantes para interven\c{c}\~ao.
+
+Na camada operacional, a primeira regra de risco gerava excesso de casos classificados como alto risco. Por isso, foi criada uma pontua\c{c}\~ao composta que passou a combinar:
+
+\begin{itemize}
+    \item predi\c{c}\~ao de risco do modelo;
+    \item nota prevista;
+    \item nota atual;
+    \item varia\c{c}\~ao esperada;
+    \item faltas acumuladas;
+    \item pend\^encias financeiras.
+\end{itemize}
+
+Com essa calibra\c{c}\~ao, a prioriza\c{c}\~ao ficou mais compat\'ivel com o uso institucional, reduzindo sobrecarga sobre coordena\c{c}\~ao e professores.

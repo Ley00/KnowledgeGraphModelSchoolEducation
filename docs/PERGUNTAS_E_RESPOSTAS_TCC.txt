@@ -89,10 +89,10 @@ O sistema consegue avaliar alguns casos com menor confianca, mas a robustez da p
 5. SOBRE A ARQUITETURA E A PIPELINE
 
 26. O que a pipeline faz de ponta a ponta?
-Ela prepara os dados, integra fontes, cria atributos temporais, seleciona modelos, executa validacao temporal, gera predições, analisa erro e produz relatorios escolares.
+Ela parte dos CSVs canônicos do projeto, integra fontes, cria atributos temporais, seleciona modelos, executa validacao temporal, gera predições, analisa erro e produz relatorios escolares. Quando necessario, esses CSVs sao alimentados por uma camada privada local de preparação do banco e extração.
 
 27. Qual e a funcao principal da arquitetura final?
-Transformar dados escolares dispersos em uma rotina reproduzivel de modelagem e apoio operacional a decisao.
+Transformar dados escolares dispersos em uma rotina reproduzivel de modelagem e apoio operacional a decisao, separando o que precisa ficar privado no ambiente local do que pode ser publicado como pipeline academica e reprodutivel.
 
 28. O que o run_full_reporting_pipeline faz?
 Executa os dois modos principais da pipeline, previsao_nota e alerta_risco, e depois gera a camada final de relatorios para professor, coordenacao e secretaria.
@@ -111,6 +111,15 @@ Sao os artefatos do modo de classificacao de risco: dataset final, modelo salvo,
 
 33. O que sao os arquivos em relatorios_escolares?
 Sao os arquivos operacionais consumidos pela escola, com visoes para professor, coordenacao, secretaria e ranking executivo.
+
+33A. Qual e a estrutura final do repositorio?
+A estrutura final ficou concentrada em `school_predictor/` como base ativa da aplicação, `artifacts/` como diretório canônico das entradas e saídas locais, `monografia/` para o texto acadêmico, `docs/` para a documentação de apoio e `diagrama/` para os fluxos e diagramas.
+
+33B. Onde ficam as partes sensiveis do banco?
+As consultas SQL reais e a rotina detalhada de preparação e extração do banco ficam em uma camada local privada, fora do Git, principalmente em `school_predictor/database/private_sql/` e `school_predictor/database/private_runtime.py`.
+
+33C. Como outra pessoa pode reproduzir a pipeline sem acesso ao banco institucional?
+Ela pode alimentar o projeto diretamente pelos CSVs canônicos em `artifacts/database/csv/`, seguindo o contrato público documentado para aluno, notas, faltas, pagamentos, responsáveis e professor por disciplina.
 
 6. SOBRE OS MODELOS UTILIZADOS
 
@@ -131,6 +140,33 @@ No modo previsao_nota, a regressao escolhida foi HistGradientBoostingRegressor. 
 
 39. Por que manter baselines se ja existe modelo mais sofisticado?
 Porque um baseline forte ajuda a verificar se o ganho do modelo e real. Em educacao aplicada, uma heuristica simples e interpretavel pode ser preferivel se entregar desempenho semelhante.
+
+39A. Por que o select_best_regression_model usa MAE e nao F1?
+Porque regressao e classificacao sao problemas diferentes. No modo de regressao, a saida e uma nota numerica continua, entao faz sentido medir o erro medio em pontos de nota. O F1 nao e apropriado para esse tipo de saida, porque ele foi criado para classes discretas, como risco e nao risco.
+
+39B. Por que o select_best_classification_model usa F1?
+Porque o alerta de risco e um problema de classificacao binaria. O F1 foi escolhido por equilibrar precision e recall, o que e importante quando se quer encontrar alunos em risco sem gerar alertas excessivos demais.
+
+39C. Por que a pipeline roda regressao e classificacao ao mesmo tempo?
+Porque o projeto nao quer apenas estimar uma nota futura, mas tambem transformar essa estimativa em prioridade pedagogica. A regressao responde qual nota o aluno tende a tirar. A classificacao responde se esse caso deve ser tratado como risco. As duas saidas juntas sao mais uteis para a escola do que qualquer uma delas isoladamente.
+
+39D. O que e MAE?
+MAE e o erro medio absoluto. Ele indica quantos pontos, em media, a previsao ficou distante da nota real. Se o MAE for 0.76, isso significa que o modelo errou em media 0.76 ponto por previsao.
+
+39E. O que e F1?
+F1 e uma metrica de classificacao que combina precision e recall. Ela e especialmente util quando o objetivo nao e apenas acertar a maioria dos casos, mas equilibrar a capacidade de encontrar alunos em risco e evitar alarmes falsos em excesso.
+
+39F. Por que foram escolhidos HistGradientBoosting e RandomForest?
+Porque o problema final do TCC se consolidou como um problema tabular temporal com variaveis heterogeneas e relacoes nao lineares. O RandomForest oferece robustez, simplicidade e serve como referencia forte. O HistGradientBoosting e muito competitivo em dados tabulares e, nos testes do projeto, apresentou desempenho melhor em cenarios importantes.
+
+39G. Por que nao usar apenas outros modelos?
+Outros modelos foram considerados em fases diferentes do trabalho, como grafos e LSTM, mas mostraram menor aderencia ao formato real da base ou maior custo de complexidade para o ganho obtido. Modelos lineares seriam mais simples, mas tenderiam a perder sinal nao linear. XGBoost, LightGBM e CatBoost seriam candidatos fortes, mas nao entraram nesta fase por foco de escopo e porque os modelos atuais ja permitiam comparacao tecnica solida.
+
+39H. Neste projeto, HistGradientBoosting e RandomForest sao os mais indicados?
+Para esta fase do projeto e para esta base, sim, eles sao escolhas muito adequadas. Isso nao significa que sejam os melhores possiveis em qualquer contexto, mas significa que foram coerentes com o tipo de dado, com o objetivo do TCC e com os resultados observados. No projeto atual, o HistGradientBoosting foi o candidato mais competitivo, enquanto o RandomForest funcionou como referencia forte e baseline supervisionado robusto.
+
+39I. Em que HistGradientBoosting e RandomForest sao melhores ou piores que seus concorrentes?
+Eles sao melhores neste contexto porque trabalham muito bem com dados tabulares, aceitam relacoes nao lineares e exigem menos estrutura sequencial perfeita do que uma LSTM. Tambem sao mais realistas para uma base escolar heterogenea do que modelos muito sensiveis a escala ou muito caros de ajustar. Por outro lado, podem ser piores que candidatos como CatBoost ou LightGBM em alguns cenarios tabulares, e nao oferecem uma explicabilidade tao direta quanto modelos lineares muito simples.
 
 7. SOBRE AS METRICAS
 

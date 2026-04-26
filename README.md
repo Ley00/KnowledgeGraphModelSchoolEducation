@@ -1,47 +1,417 @@
-<h1 align="center">
-  <br>
-    <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/30067a7d-c59b-4ccf-a40c-7323af97d71d" width="500">
-  <br>
-  Knowledge Graph Model School Education
-</h1>
-<h2>
-  Neural Networks for Graphs as Tools for reconnaissance of standards in educational data
-</h2>
-<h3>
-  This project focuses on investigating and developing a graph neural network model to enhance pattern recognition in educational data. The primary goal is to early identify issues related to students at risk of dropping out and pinpoint factors contributing to academic failure. Ultimately, the model aims to assist educational institutions in anticipating and implementing preventive measures.
-</h3>
+# School Predictor for Academic Risk Analysis
 
-## Features
+Projeto de TCC para análise preditiva de dados escolares, com foco em antecipar risco acadêmico e apoiar decisões de professor, coordenação e secretaria.
 
-Tools and languages used in development!
+Hoje o repositório está organizado em torno de uma arquitetura principal chamada `school_predictor/`, que concentra:
+- acesso ao banco
+- manutenção do banco restaurado localmente
+- extração de CSVs
+- pipeline de modelagem
+- geração de relatórios
+- dashboard em Streamlit
 
-- <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/ae5246a8-1425-4286-8ed3-946178a48944" height="20"> **Python** - An open-source framework for building native applications for iOS, Android, and Windows quickly and consistently. Flutter uses a programming language called Dart to construct beautiful and responsive user interfaces.
-- <img src="https://github.com/LVDSistemas/Aplicativo-2.1/assets/132093842/dc35dac0-19a3-48d1-af6a-e459163b2527" height="20"> **SQL** - Implements an embedded SQL database, providing an effective solution for structured data storage and retrieval.
+## Objetivo
 
-Libraries
+O projeto busca responder duas perguntas principais:
+- qual tende a ser a próxima nota do aluno em uma disciplina
+- se esse aluno está entrando em uma zona de atenção pedagógica
 
-- <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/ef13c302-83e6-478b-9485-91d65d214a90" height="20"> **Numpy** - NumPy is the fundamental package for scientific computing with Python.
-- <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/f6714fa0-da9c-4941-adc4-33e655aa9b9d" height="20"> **Pandas** - Pandas is a fast, powerful, flexible, and easy-to-use open-source data manipulation and analysis library built on top of Python.
-- <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/d3295ad3-5dbe-4dad-bb2b-6431c1beb8b7" height="20"> **SQLAlchemy** - SQLAlchemy is the Python SQL toolkit and Object-Relational Mapping (ORM) library.
-- <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/6248da89-8e9a-46e9-addb-5a9afc1574fa" height="20"> **Pyodbc** - PyODBC is an open-source Python module that makes accessing ODBC (Open Database Connectivity) databases simple.
-- <img src="https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/assets/30672542/890e6505-a0fd-4c0f-bce1-bfe54c7aa962" height="20"> **Scikit-Learn** - It is an open-source machine learning library for the Python programming language. It includes various classification, regression, and clustering algorithms, including supporting vector machines, random forests, gradient boosting, k-means, and DBSCAN.
-## Getting Started
+Esses sinais são consolidados em relatórios operacionais para uso escolar.
 
-Follow these steps to set up the project on your local machine.
+## Arquitetura atual
 
-### Prerequisites
+### Núcleo principal
 
-Make sure you have the following installed on your machine:
+- `school_predictor/`
+  - pacote principal da aplicação
+- `school_predictor/database/`
+  - acesso ao banco, limpeza do banco restaurado e extração dos CSVs
+- `school_predictor/pipeline/`
+  - dataset, modelagem, avaliação e relatórios
+- `school_predictor/app/`
+  - dashboard Streamlit
+- `artifacts/`
+  - diretório canônico dos CSVs extraídos, artefatos da pipeline e relatórios operacionais
 
-- [Visual Studio Code](https://code.visualstudio.com/)
-- [Python](https://www.python.org/)
+### Pontos de entrada
 
-### Clone the Repository
+- `main.py`
+  - ponto de entrada mínimo, hoje delegando para a CLI
+- `dashboard_streamlit.py`
+  - ponto de entrada do dashboard
+- `school_predictor/cli.py`
+  - CLI principal do projeto
 
-1. Open your terminal and run the following command to clone the repository:
-   ```bash
-   git clone https://github.com/Ley00/KnowledgeGraphModelSchoolEducation.git
+### Pastas acadêmicas e de apoio
 
-## License
+- `monografia/`
+  - monografia e pré-projeto em LaTeX
+- `docs/`
+  - documentação textual do TCC
+- `diagrama/`
+  - diagramas da arquitetura e do fluxo
 
-[![NPM](https://img.shields.io/npm/l/react)](https://github.com/Ley00/KnowledgeGraphModelSchoolEducation/blob/main/LICENSE)
+### Escopo atual
+
+- o repositório foi reduzido ao fluxo operacional atual do TCC
+- o código histórico fora desse fluxo foi descartado
+- `artifacts/` concentra as entradas e saídas locais necessárias para operação
+
+## Estrutura resumida
+
+```text
+.
+├── school_predictor/
+│   ├── app/
+│   ├── database/
+│   └── pipeline/
+├── artifacts/
+├── main.py
+├── dashboard_streamlit.py
+├── monografia/
+├── docs/
+└── diagrama/
+```
+
+## Requisitos
+
+- Python 3
+- ambiente virtual `.venv`
+- SQL Server local ou acessível pela rede
+- ODBC Driver 18 for SQL Server
+
+Para o dashboard:
+- `streamlit`
+- `plotly`
+
+Para a monografia:
+- `MacTeX`, `TeX Live` ou equivalente
+
+## Configuração local segura
+
+O repositório não versiona:
+- credenciais do banco
+- arquivos `.env`
+- consultas SQL reais de extração
+- artefatos locais de dados e resultados
+
+Ignorados no Git:
+- `.env`
+- `school_predictor/database/private_sql/`
+- `school_predictor/database/private_runtime.py`
+- `artifacts/`
+
+## Proteção das consultas SQL
+
+As consultas reais de extração do banco nao ficam mais expostas no código versionado. O repositório público mantém apenas:
+- o fluxo de extração
+- o fluxo público de preparação do banco
+- o contrato conceitual das entradas
+- os CSVs esperados pela pipeline
+
+As consultas SQL reais ficam em ambiente local, na pasta ignorada:
+- `school_predictor/database/private_sql/`
+
+A orquestração privada do banco e da extração também fica em um arquivo local ignorado:
+- `school_predictor/database/private_runtime.py`
+
+Se necessário, você também pode apontar outro diretório privado com:
+- `SCHOOL_PREDICTOR_SQL_DIR`
+
+Documentação pública da entrada dos dados:
+- [docs/ENTRADA_DE_DADOS_E_CONTRATOS.md](/Users/warley/Desktop/Development/Personal/KnowledgeGraphModelSchoolEducation/docs/ENTRADA_DE_DADOS_E_CONTRATOS.md)
+
+## Como replicar o repositório sem acesso ao banco institucional
+
+Para entender ou reproduzir a arquitetura pública do projeto, o repositório precisa apenas do contrato dos CSVs em:
+- `artifacts/database/csv/aluno.csv`
+- `artifacts/database/csv/media_nota_aluno.csv`
+- `artifacts/database/csv/faltas_aluno.csv`
+- `artifacts/database/csv/pagamento_aluno.csv`
+- `artifacts/database/csv/responsaveis_aluno.csv`
+- `artifacts/database/csv/professor_disciplina.csv`
+
+Esses arquivos são a interface de entrada da pipeline. Quem não tiver acesso ao banco institucional pode:
+- gerar arquivos equivalentes com a mesma granularidade e significado
+- ou montar um subconjunto anonimizado seguindo o contrato em `docs/ENTRADA_DE_DADOS_E_CONTRATOS.md`
+
+Em outras palavras:
+- o banco real é uma forma de alimentar o projeto
+- os CSVs canônicos são a forma mínima de reproduzir a pipeline pública
+
+### 1. Criar o `.env`
+
+```bash
+cp .env.example .env
+```
+
+Preencha com os dados locais:
+
+```env
+DB_DRIVER=ODBC Driver 18 for SQL Server
+DB_NAME=COLEGIO_TESTE
+DB_HOST=127.0.0.1
+DB_PORT=1433
+DB_USER=seu_usuario
+DB_PASS=sua_senha
+```
+
+### 2. Criar a camada privada local de operação com banco
+
+```bash
+cp school_predictor/database/private_runtime.example.py school_predictor/database/private_runtime.py
+```
+
+Esse arquivo local deve concentrar duas funções:
+- `prepare_private_database(...)`
+- `extract_private_school_data(...)`
+
+Ele permanece fora do Git e é a camada onde ficam:
+- a preparação física do banco restaurado
+- a extração com tratamentos sensíveis ainda necessários
+
+## Instalação
+
+O bootstrap principal do repositório foi simplificado para instalar apenas o stack Python necessário para a arquitetura atual.
+
+Instalação:
+
+```bash
+python3 setup.py
+```
+
+Arquivos usados por esse bootstrap:
+- `requirements.txt`
+  - dependências da aplicação atual em `school_predictor/`
+
+Observações:
+- `setup.py` não instala dependências de sistema como ODBC Driver 18 ou MacTeX
+- o driver ODBC e o SQL Server continuam sendo pré-requisitos externos
+- se você preferir, ainda pode usar seu próprio gerenciamento de ambiente local
+
+## CLI principal
+
+O projeto agora possui uma CLI única:
+
+```bash
+./.venv/bin/python -m school_predictor --help
+```
+
+Comandos disponíveis:
+- `workflow`
+- `prepare-db`
+- `extract`
+- `pipeline`
+- `reports`
+- `compare-history`
+- `clean`
+
+## Fluxos principais
+
+## 1. Preparar um novo banco restaurado
+
+Quando um novo backup for restaurado localmente, o fluxo é:
+- renomear para `COLEGIO_TESTE`
+- remover tabelas desnecessárias
+- anonimizar dados sensíveis
+- reorganizar índices e atualizar estatísticas
+
+O código principal fica em:
+- `school_predictor/database/maintenance.py`
+
+Na arquitetura atual, a implementação real dessa etapa deve ficar no arquivo local:
+- `school_predictor/database/private_runtime.py`
+
+No fluxo atual, essa etapa pode ser chamada por:
+
+```bash
+./.venv/bin/python -m school_predictor prepare-db
+```
+
+## 2. Extrair CSVs do banco
+
+Depois da preparação do banco, a extração principal é feita por:
+- `school_predictor/database/extraction.py`
+- `school_predictor/database/queries.py`
+
+Exemplo:
+
+```bash
+./.venv/bin/python -m school_predictor extract --project-root .
+```
+
+Esse fluxo gera os CSVs-base usados pela modelagem, como:
+- `aluno.csv`
+- `media_nota_aluno.csv`
+- `faltas_aluno.csv`
+- `pagamento_aluno.csv`
+- `responsaveis_aluno.csv`
+- `professor_disciplina.csv`
+
+Eles passam a ser gravados de forma canônica em:
+- `artifacts/database/csv/`
+
+As consultas SQL que alimentam essa etapa sao carregadas localmente de:
+- `school_predictor/database/private_sql/`
+
+Na arquitetura atual, a implementação real dessa etapa também fica no arquivo local:
+- `school_predictor/database/private_runtime.py`
+
+O GitHub deve mostrar apenas o contrato conceitual da entrada de dados, nao o SQL real nem o desenho completo do banco.
+
+O mesmo princípio vale para a rotina SQL de preparação e anonimização do banco: a aplicação publica o fluxo e o objetivo da etapa, mas mantém o script SQL detalhado apenas em ambiente local.
+
+Se o banco já tiver sido previamente tratado, você pode testar o projeto começando diretamente pela extração:
+
+```bash
+./.venv/bin/python -m school_predictor extract --project-root .
+```
+
+## 3. Rodar a pipeline preditiva
+
+O núcleo atual está em:
+- `school_predictor/pipeline/`
+
+Execução completa:
+
+```bash
+./.venv/bin/python -m school_predictor workflow --project-root .
+```
+
+Execuções por modo:
+
+```bash
+./.venv/bin/python -m school_predictor pipeline --mode previsao_nota --project-root .
+./.venv/bin/python -m school_predictor pipeline --mode alerta_risco --project-root .
+```
+
+O `main.py` já aponta para o fluxo principal:
+
+```python
+from school_predictor.cli import main
+
+main(["workflow"])
+```
+
+Comparação de histórico mínimo:
+
+```bash
+./.venv/bin/python -m school_predictor compare-history --mode previsao_nota --history-values 1 2 3
+```
+
+## 5. Limpar artefatos locais
+
+Para remover caches Python e auxiliares de compilação da monografia:
+
+```bash
+./.venv/bin/python -m school_predictor clean --project-root .
+```
+
+Para apenas simular a limpeza:
+
+```bash
+./.venv/bin/python -m school_predictor clean --project-root . --dry-run
+```
+
+Se você quiser limpar também os resultados locais da pipeline e das extrações:
+
+```bash
+./.venv/bin/python -m school_predictor clean --project-root . --targets latex pycache results
+```
+
+O alvo `results` é opcional justamente para evitar apagar saídas analíticas do TCC sem intenção.
+
+## 4. Rodar o dashboard
+
+Com o ambiente virtual ativo:
+
+```bash
+./.venv/bin/streamlit run dashboard_streamlit.py
+```
+
+O dashboard real está em:
+- `school_predictor/app/dashboard.py`
+
+## Saídas geradas localmente
+
+Os artefatos canônicos da pipeline passam a ser gravados em:
+- `artifacts/pipeline/previsao_nota/`
+- `artifacts/pipeline/alerta_risco/`
+- `artifacts/reports/`
+
+Essas pastas guardam:
+- datasets finais
+- previsões
+- análises de erro
+- relatórios técnicos
+- relatórios escolares
+- ranking executivo
+
+Esses arquivos não devem ser enviados ao GitHub.
+
+## Modelagem atual
+
+O projeto trabalha com dois objetivos:
+- regressão da próxima nota
+- classificação de risco pedagógico
+
+Os principais candidatos comparados hoje são:
+- `HistGradientBoosting`
+- `RandomForest`
+- baselines temporais baseados nas últimas notas
+
+As métricas principais são:
+- `MAE` para regressão
+- `F1` para classificação
+
+## Monografia e pré-projeto
+
+A pasta `monografia/` contém o projeto LaTeX do IFG para:
+- monografia final
+- pré-projeto
+
+Arquivos principais:
+- `monografia/modelo-ifg.tex`
+- `monografia/preprojeto-ifg.tex`
+
+Compilar a monografia:
+
+```bash
+cd monografia
+latexmk -pdf -interaction=nonstopmode modelo-ifg.tex
+```
+
+Compilar o pré-projeto:
+
+```bash
+cd monografia
+latexmk -pdf -interaction=nonstopmode preprojeto-ifg.tex
+```
+
+## Consolidação da refatoração
+
+Após a limpeza final:
+- `school_predictor/` ficou como única base de código da aplicação
+- `main.py` e `dashboard_streamlit.py` permanecem como pontos de entrada mínimos
+- `artifacts/` concentra as entradas e saídas locais do fluxo operacional
+- o código histórico fora do fluxo atual foi removido para reduzir ruído arquitetural
+
+## Privacidade e sensibilidade
+
+Este projeto lida com dados escolares sensíveis. Por isso:
+- nunca versionar credenciais
+- nunca versionar SQL real de extração ou preparação do banco
+- nunca subir datasets e resultados locais
+- manter anonimização no tratamento do banco
+
+## Documentação complementar
+
+- `docs/PERGUNTAS_E_RESPOSTAS_TCC.txt`
+- `docs/REGRA_MINIMA_HISTORICO_AVALIACAO.txt`
+- `docs/TCC_MONOGRAFIA.md`
+- `diagrama/fluxo_simples_modelagem.md`
+- `diagrama/fluxo_detalhado.md`
+
+## Licença
+
+Ver [LICENSE](LICENSE).

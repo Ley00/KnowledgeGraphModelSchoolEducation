@@ -1,99 +1,71 @@
-import os
+from __future__ import annotations
+
+import argparse
 import subprocess
 import sys
-import platform
+import venv
+from pathlib import Path
 
-# Lista de dependências
-dependencies = [
-    'pyodbc', 
-    'sqlalchemy', 
-    'pandas', 
-    'scikit-learn', 
-    'matplotlib',
-    'plotly',
-    'streamlit',
-    'torch', 
-    'torchvision', 
-    'torchaudio',
-    'torch-geometric',
-    'seaborn',
-]
 
-# Caminho do pip será definido globalmente
-pip_path = None
+PROJECT_ROOT = Path(__file__).resolve().parent
+VENV_DIR = PROJECT_ROOT / ".venv"
+CORE_REQUIREMENTS = PROJECT_ROOT / "requirements.txt"
 
-# Cria o ambiente virtual
-def create_virtualenv():
-    if not os.path.exists('.venv'):
-        print("Criando ambiente virtual (.venv)...")
-        subprocess.check_call([sys.executable, "-m", "venv", ".venv"])
-    else:
-        print("Ambiente virtual (.venv) já existe.")
 
-# Verifica se as dependências estão instaladas
-def install_dependency(dependency):
-    try:
-        print(f"Verificando se {dependency} está instalado...")
-        subprocess.check_call([pip_path, 'show', dependency])
-        print(f"{dependency} já está instalado.")
-    except subprocess.CalledProcessError:
-        print(f"{dependency} não encontrado. Instalando...")
-        subprocess.check_call([pip_path, 'install', dependency])
+def create_virtualenv() -> None:
+    """Create the local virtual environment when it does not exist yet."""
+    if VENV_DIR.exists():
+        print("Ambiente virtual .venv já existe.")
+        return
 
-# Atualiza a dependência, caso já esteja instalada
-def update_dependency(dependency):
-    try:
-        print(f"Atualizando {dependency} para a versão mais recente...")
-        subprocess.check_call([pip_path, 'install', '--upgrade', dependency])
-    except subprocess.CalledProcessError as e:
-        print(f"Erro ao atualizar {dependency}: {e}")
-        sys.exit()
+    print("Criando ambiente virtual em .venv...")
+    venv.create(VENV_DIR, with_pip=True)
 
-# Instala o Homebrew e os pacotes MSODBCSQL18 e MSSQL-TOOLS18 no Mac
-def install_homebrew_dependencies():
-    if platform.system() == 'Darwin':
-        if subprocess.call(['which', 'brew']) != 0:
-            print("Homebrew não encontrado. Instalando...")
-            subprocess.check_call(['/bin/bash', '-c', "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"])
-            subprocess.call(['echo', 'eval "$(/opt/homebrew/bin/brew shellenv)" >> ~/.zprofile'], shell=True)
-            subprocess.call(['source ~/.zprofile'], shell=True)
 
-        try:
-            subprocess.check_call(['brew', 'tap', 'microsoft/mssql-release', 'https://github.com/Microsoft/homebrew-mssql-release'])
-            subprocess.check_call(['brew', 'update'])
-            print("Instalando msodbcsql18 e mssql-tools18...")
-            env = os.environ.copy()
-            env['HOMEBREW_ACCEPT_EULA'] = 'Y'
-            subprocess.check_call(['brew', 'install', 'msodbcsql18', 'mssql-tools18'], env=env)
-        except subprocess.CalledProcessError:
-            print("Erro ao instalar os pacotes MSODBCSQL18 ou MSSQL-TOOLS18.")
-            sys.exit()
+def get_pip_path() -> Path:
+    """Return the pip executable inside the local virtual environment."""
+    if sys.platform.startswith("win"):
+        return VENV_DIR / "Scripts" / "pip.exe"
+    return VENV_DIR / "bin" / "pip"
 
-# Verifica o sistema operacional e instala as dependências
-def install_dependencies():
-    global pip_path
-    if platform.system() == 'Darwin':
-        pip_path = './.venv/bin/pip'
-        install_homebrew_dependencies()
-    elif platform.system() == 'Windows':
-        pip_path = '.\\.venv\\Scripts\\pip.exe'
-    else:
-        raise OSError("Sistema operacional não suportado.")
 
-    print("Instalando dependências...")
-    for dependency in dependencies:
-        install_dependency(dependency)
+def run_pip_command(*args: str) -> None:
+    pip_path = get_pip_path()
+    subprocess.check_call([str(pip_path), *args], cwd=PROJECT_ROOT)
 
-# Atualiza as dependências
-def update_dependencies():
-    print("Atualizando dependências...")
-    for dependency in dependencies:
-        update_dependency(dependency)
 
-# Verifica se o ambiente virtual e as dependências estão instaladas
-def verify_dependencies():
+def install_python_dependencies() -> None:
+    """Install the Python dependencies required by the current application."""
     create_virtualenv()
-    install_dependencies()
-    update_dependencies()
-    if platform.system() == 'Darwin':
-        install_homebrew_dependencies()
+    print("Atualizando pip...")
+    run_pip_command("install", "--upgrade", "pip")
+
+    print(f"Instalando dependências principais de {CORE_REQUIREMENTS.name}...")
+    run_pip_command("install", "-r", str(CORE_REQUIREMENTS))
+
+
+def print_manual_notes() -> None:
+    """Explain external dependencies that stay outside Python packaging."""
+    print("\nBootstrap Python concluído.")
+    print("Dependências externas continuam manuais:")
+    print("- SQL Server acessível localmente ou em rede")
+    print("- ODBC Driver 18 for SQL Server instalado no sistema")
+    print("- MacTeX/TeX Live para compilar a monografia em LaTeX")
+
+
+def build_parser() -> argparse.ArgumentParser:
+    return argparse.ArgumentParser(
+        prog="setup.py",
+        description="Bootstrap simplificado do ambiente Python do projeto.",
+    )
+
+
+def main(argv: list[str] | None = None) -> int:
+    build_parser().parse_args(argv)
+    install_python_dependencies()
+    print_manual_notes()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

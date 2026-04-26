@@ -1,0 +1,57 @@
+\chapter{Discuss\~ao, Limita\c{c}\~oes e Conclus\~ao}
+\label{cap:conclusao}
+
+\section{Discuss\~ao dos resultados}
+\label{sec:discussao}
+
+Os resultados mostram que a solu\c{c}\~ao final apresenta ader\^encia melhor ao problema do que as hip\'oteses iniciais do projeto. Embora grafos e \textit{LSTM} tenham sido importantes na fase explorat\'oria, a experi\^encia emp\'irica indicou que o problema central estava melhor representado por uma base tabular temporal com atributos derivados e valida\c{c}\~ao cronol\'ogica.
+
+Outro ponto importante \'e o valor dos baselines. Em diferentes momentos do trabalho, regras simples baseadas na \'ultima nota ou em m\'edias m\'oveis competiram de forma relevante com modelos mais sofisticados. Isso refor\c{c}a que complexidade algor\'itmica n\~ao deve ser tomada como sin\^onimo autom\'atico de superioridade.
+
+Do ponto de vista institucional, o maior avan\c{c}o do projeto n\~ao est\'a apenas nas m\'etricas, mas na passagem da predi\c{c}\~ao para a a\c{c}\~ao. O valor do sistema aparece quando a nota prevista, o alerta de risco e os sinais complementares s\~ao convertidos em relat\'orios intelig\'iveis para professor, coordena\c{c}\~ao e secretaria.
+
+\section{Limita\c{c}\~oes do trabalho}
+\label{sec:limitacoes}
+
+As principais limita\c{c}\~oes identificadas foram:
+
+\begin{enumerate}
+    \item o v\'inculo de professor ainda n\~ao cobre integralmente todo o hist\'orico analisado;
+    \item o ranking executivo ainda concentra muitos casos nas faixas mais altas de prioridade;
+    \item a base de 2026 j\'a existe, mas nem todos os cen\'arios possuem alvo consolidado suficiente para teste completo;
+    \item o projeto utiliza vari\'aveis institucionais dispon\'iveis, mas n\~ao incorpora dimens\~oes qualitativas, socioemocionais ou contextuais mais profundas;
+    \item a generaliza\c{c}\~ao para outras escolas exige adapta\c{c}\~ao local da arquitetura e nova valida\c{c}\~ao.
+\end{enumerate}
+
+Tamb\'em existem amea\c{c}as \`a validade interna, externa e de constru\c{c}\~ao. Nem toda queda de desempenho \'e explicada pelas vari\'aveis dispon\'iveis, e conceitos educacionais complexos acabam representados por \textit{proxies} quantitativos, como faltas, pagamentos e trajet\'oria de notas.
+
+\section{Conclus\~ao}
+\label{sec:conclusao-final}
+
+Este Trabalho de Conclus\~ao de Curso apresentou o desenvolvimento de um sistema preditivo para apoio \`a decis\~ao pedag\'ogica com base em dados escolares reais. O projeto evoluiu de uma hip\'otese inicial orientada a grafos para uma pipeline temporal tabular reproduz\'ivel, capaz de:
+
+\begin{itemize}
+    \item prever a pr\'oxima nota do aluno com desempenho superior a baselines simples;
+    \item identificar risco de nota futura abaixo de 6 com \textit{recall} elevado;
+    \item integrar notas, faltas, pagamentos e contexto escolar em uma arquitetura \'unica;
+    \item transformar resultados t\'ecnicos em relat\'orios operacionais para diferentes atores da escola.
+\end{itemize}
+
+Em termos quantitativos, o modo de previs\~ao num\'erica atingiu \textit{MAE} de 0,7601, enquanto o modo de alerta de risco alcan\c{c}ou \textit{F1} de 0,7437 e \textit{recall} de 0,8618 no teste temporal. Em termos pr\'aticos, esses resultados indicam que a solu\c{c}\~ao j\'a pode servir como mecanismo de triagem e prioriza\c{c}\~ao institucional, desde que usada com supervis\~ao humana e interpreta\c{c}\~ao contextualizada.
+
+Assim, a principal contribui\c{c}\~ao do trabalho n\~ao est\'a apenas em acertar melhor uma nota futura, mas em mostrar que \'e poss\'ivel construir uma arquitetura anal\'itica coerente com o cotidiano da escola, eticamente defens\'avel e operacionalmente \'util.
+
+\section{Trabalhos futuros}
+\label{sec:futuro}
+
+Como continuidade natural do projeto, destacam-se os seguintes desdobramentos:
+
+\begin{enumerate}
+    \item ampliar a cobertura do v\'inculo com professores;
+    \item recalibrar os limiares do ranking executivo;
+    \item incorporar t\'ecnicas adicionais de explicabilidade;
+    \item avaliar o impacto real dos relat\'orios na rotina escolar;
+    \item testar novos modelos tabulares, como CatBoost e LightGBM;
+    \item investigar vari\'aveis qualitativas e socioemocionais;
+    \item validar a solu\c{c}\~ao em outras escolas ou redes.
+\end{enumerate}

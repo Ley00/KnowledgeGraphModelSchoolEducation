@@ -1,0 +1,116 @@
+\chapter{Arquitetura da Solu\c{c}\~ao e Integra\c{c}\~ao dos Dados}
+\label{cap:arquitetura}
+
+\section{Vis\~ao geral da arquitetura}
+\label{sec:visao-geral}
+
+A arquitetura final foi organizada para separar claramente as responsabilidades do sistema. O fluxo consolidado pode ser resumido em oito etapas:
+
+\begin{enumerate}
+    \item manuten\c{c}\~ao e anonimiza\c{c}\~ao da base original;
+    \item extra\c{c}\~ao das tabelas relevantes para arquivos \sigla{CSV}{Comma-Separated Values};
+    \item leitura estruturada dessas fontes pela pipeline;
+    \item constru\c{c}\~ao do dataset longitudinal;
+    \item separa\c{c}\~ao temporal entre treino, valida\c{c}\~ao e teste;
+    \item compara\c{c}\~ao autom\'atica entre modelos e baselines;
+    \item gera\c{c}\~ao de predi\c{c}\~oes e an\'alises de erro;
+    \item produ\c{c}\~ao de relat\'orios operacionais para a escola.
+\end{enumerate}
+
+Em termos de organiza\c{c}\~ao do c\'odigo, o n\'ucleo da solu\c{c}\~ao ficou distribu\'ido entre m\'odulos de configura\c{c}\~ao, leitura das fontes, engenharia de atributos, modelagem, relat\'orios e orquestra\c{c}\~ao.
+
+Na vers\~ao final do reposit\'orio, essa organiza\c{c}\~ao foi consolidada no pacote \texttt{school\_predictor/}, com artefatos locais centralizados em \texttt{artifacts/}. Essa separa\c{c}\~ao tornou a arquitetura mais simples de compreender e mais segura para publica\c{c}\~ao do c\'odigo.
+
+\section{Modos de execu\c{c}\~ao}
+\label{sec:modos}
+
+A pipeline foi dividida em dois modos complementares:
+
+\begin{itemize}
+    \item \texttt{previsao\_nota}: voltado \`a regress\~ao da pr\'oxima nota, com hist\'orico m\'inimo de uma observa\c{c}\~ao anterior por disciplina;
+    \item \texttt{alerta\_risco}: voltado \`a classifica\c{c}\~ao de risco de pr\'oxima nota abaixo de 6,0, com hist\'orico m\'inimo de duas observa\c{c}\~oes anteriores.
+\end{itemize}
+
+Essa divis\~ao surgiu dos experimentos: o mesmo recorte de hist\'orico n\~ao era o melhor para os dois objetivos. Assim, a arquitetura passou a preservar duas configura\c{c}\~oes operacionais, cada uma adequada ao seu uso principal.
+
+\section{Integra\c{c}\~ao de notas, faltas, pagamentos e professores}
+\label{sec:integracao}
+
+O trabalho foi estruturado para unir quatro blocos principais de informa\c{c}\~ao:
+
+\begin{itemize}
+    \item desempenho acad\^emico;
+    \item frequ\^encia;
+    \item sinais administrativos e financeiros;
+    \item contexto escolar, incluindo disciplina, s\'erie, turma e professor.
+\end{itemize}
+
+Do ponto de vista de engenharia, a entrada de dados foi organizada em duas camadas. A primeira camada \'e privada e local, respons\'avel pela prepara\c{c}\~ao do banco restaurado e pela execu\c{c}\~ao das consultas SQL reais. A segunda camada \'e p\'ublica e reproduz\'ivel, baseada nos arquivos \texttt{CSV} can\^onicos consumidos pela pipeline em \texttt{artifacts/database/csv/}. Isso permite explicar e reproduzir a arquitetura sem divulgar a estrutura interna do banco institucional.
+
+As notas representam o eixo central da modelagem. A partir delas, foram constru\'idos hist\'oricos deslocados, m\'edias m\'oveis, tend\^encias e estat\'isticas de refer\^encia. As faltas foram agregadas por etapa e acumuladas ao longo do tempo. Os pagamentos foram resumidos por ano letivo, incluindo quantidades, pend\^encias e m\'edias de atraso. O professor, quando dispon\'ivel no banco atualizado, passou a ser incorporado como atributo contextual, sem remover linhas quando o v\'inculo docente estivesse ausente.
+
+\section{Engenharia de atributos}
+\label{sec:engenharia}
+
+Os atributos criados para a modelagem incluem:
+
+\begin{itemize}
+    \item nota anterior 1, 2 e 3;
+    \item m\'edia das \'ultimas notas;
+    \item desvio hist\'orico da disciplina;
+    \item tend\^encia da \'ultima nota;
+    \item m\'edia hist\'orica do aluno no ano;
+    \item m\'edia do aluno no ano anterior;
+    \item m\'edia da disciplina no ano anterior;
+    \item m\'edia da coorte por etapa;
+    \item faltas da etapa;
+    \item faltas acumuladas;
+    \item pagamentos realizados e pendentes no ano;
+    \item dias at\'e pagamento;
+    \item indicador de disponibilidade do professor.
+\end{itemize}
+
+Todos esses atributos foram constru\'idos usando apenas informa\c{c}\~ao dispon\'ivel at\'e o ponto da previs\~ao, preservando a causalidade temporal do problema.
+
+\section{Constru\c{c}\~ao do alvo e preven\c{c}\~ao de vazamento}
+\label{sec:alvo}
+
+Foram definidos dois alvos principais:
+
+\begin{enumerate}
+    \item \texttt{target\_nota\_proxima}, correspondente ao valor num\'erico da pr\'oxima nota observada;
+    \item \texttt{target\_risco\_proxima}, correspondente ao indicador bin\'ario de pr\'oxima nota inferior a 6,0.
+\end{enumerate}
+
+Para evitar vazamento de informa\c{c}\~ao, os atributos hist\'oricos foram calculados por deslocamento, m\'edias acumuladas ou agrega\c{c}\~oes limitadas ao passado. Isso foi essencial para garantir que o desempenho medido refletisse um cen\'ario real de uso, e n\~ao apenas um ajuste artificial a dados futuros.
+
+\section{Camada de relat\'orios}
+\label{sec:camada-relatorios}
+
+Al\'em da modelagem, a arquitetura incorpora uma camada pr\'opria de relat\'orios com quatro sa\'idas principais:
+
+\begin{itemize}
+    \item relat\'orio do professor, com foco por aluno e disciplina;
+    \item relat\'orio da coordena\c{c}\~ao, com agregados por s\'erie e disciplina;
+    \item relat\'orio da secretaria, com \'enfase administrativa;
+    \item ranking executivo de alunos priorit\'arios.
+\end{itemize}
+
+Essa camada foi decisiva para aproximar a solu\c{c}\~ao do problema real da escola, convertendo resultados t\'ecnicos em informa\c{c}\~ao acion\'avel.
+
+\section{Estrutura final do reposit\'orio e do fluxo operacional}
+\label{sec:estrutura-final}
+
+Na forma final do projeto, a base ativa do software ficou organizada nos seguintes blocos:
+
+\begin{itemize}
+    \item \texttt{school\_predictor/database}: acesso ao banco, wrappers p\'ublicos de prepara\c{c}\~ao e extra\c{c}\~ao, e contrato das consultas;
+    \item \texttt{school\_predictor/database/private\_runtime.py}: camada local privada para prepara\c{c}\~ao f\'isica do banco e extra\c{c}\~ao com tratamento sens\'ivel;
+    \item \texttt{school\_predictor/database/private\_sql/}: consultas SQL reais mantidas apenas no ambiente local;
+    \item \texttt{school\_predictor/pipeline}: constru\c{c}\~ao do dataset, modelagem, avalia\c{c}\~ao e relat\'orios;
+    \item \texttt{school\_predictor/app}: dashboard em Streamlit;
+    \item \texttt{artifacts/database/csv}: interface can\^onica de entrada da pipeline;
+    \item \texttt{artifacts/pipeline} e \texttt{artifacts/reports}: sa\'idas anal\'iticas e operacionais.
+\end{itemize}
+
+Com isso, a arquitetura final passou a separar claramente o que precisa ficar privado por envolver estrutura institucional do banco e o que pode ser publicado para fins acad\^emicos, reprodutibilidade e apresenta\c{c}\~ao do TCC.
