@@ -25,6 +25,7 @@ Quando uma alteracao relevante for feita, a documentacao deve ser atualizada no 
 - `docs/ENTRADA_DE_DADOS_E_CONTRATOS.md` quando a mudanca afetar o fluxo de entrada dos dados, o contrato conceitual das extrações ou a forma segura de documentar o banco sem expor o SQL real
 - `school_predictor/cli.py` quando a mudanca afetar a operacao principal do projeto por linha de comando
 - arquivos em `docs/`
+- notebooks em `crisp_dm/` quando a mudanca afetar as etapas CRISP-DM usadas para demonstrar o TCC
 - projeto LaTeX da monografia em `monografia/`
 - monografia do TCC
 - arquivo de perguntas e respostas
@@ -55,6 +56,8 @@ Quando uma alteracao relevante for feita, a documentacao deve ser atualizada no 
 10. Sempre que uma alteracao mudar bootstrap, dependencias ou arquivos gerados localmente, revisar tambem o `.gitignore` e os arquivos de requisitos aplicaveis.
 11. As consultas SQL reais de extração e a rotina SQL detalhada de preparação do banco devem permanecer fora do Git, carregadas localmente a partir de `school_predictor/database/private_sql/` e da camada privada `school_predictor/database/private_runtime.py`, ou de um diretório privado equivalente definido por ambiente.
 12. Quando a entrada de dados mudar, documentar publicamente o contrato da extração, o significado dos CSVs e o objetivo de preparação do banco, mas nao expor o SQL bruto nem o desenho completo do banco institucional.
+13. Sempre que qualquer alteracao de codigo mudar entrada de dados, preparacao, engenharia de atributos, escolha de modelos, metricas, validacao, relatorios, dashboard, artefatos gerados ou fluxo operacional, verificar os notebooks em `crisp_dm/` e atualizar os itens afetados quando necessario.
+14. Os notebooks em `crisp_dm/` devem permanecer como material demonstrativo seguro: nao salvar outputs com dados reais sensiveis, nao expor SQL privado, credenciais, estrutura completa do banco institucional ou dados pessoais identificaveis.
 
 ## Objetivo das proximas iteracoes
 

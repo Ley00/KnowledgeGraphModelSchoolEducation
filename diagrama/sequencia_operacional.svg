@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1660" height="980" viewBox="0 0 1660 980">
+  <style>
+    .title { font: 700 28px Arial, sans-serif; fill: #111827; }
+    .label { font: 600 15px Arial, sans-serif; fill: #111827; }
+    .small { font: 500 13px Arial, sans-serif; fill: #374151; }
+    .head { fill: #eff6ff; stroke: #2563eb; stroke-width: 2; rx: 10; }
+    .msg { fill: #f8fafc; stroke: #1f2937; stroke-width: 1.8; rx: 8; }
+    .line { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 7 6; }
+    .arrow { stroke: #475569; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <text x="830" y="38" text-anchor="middle" class="title">Sequência Operacional</text>
+
+  <rect x="60" y="80" width="150" height="52" class="head"/><text x="135" y="112" text-anchor="middle" class="label">Usuário</text>
+  <rect x="260" y="80" width="150" height="52" class="head"/><text x="335" y="112" text-anchor="middle" class="label">CLI</text>
+  <rect x="460" y="80" width="170" height="52" class="head"/><text x="545" y="112" text-anchor="middle" class="label">application.py</text>
+  <rect x="690" y="80" width="190" height="52" class="head"/><text x="785" y="112" text-anchor="middle" class="label">orchestration.py</text>
+  <rect x="930" y="80" width="170" height="52" class="head"/><text x="1015" y="112" text-anchor="middle" class="label">dataset/modeling</text>
+  <rect x="1160" y="80" width="160" height="52" class="head"/><text x="1240" y="112" text-anchor="middle" class="label">reporting.py</text>
+  <rect x="1360" y="80" width="120" height="52" class="head"/><text x="1420" y="112" text-anchor="middle" class="label">artifacts</text>
+  <rect x="1500" y="80" width="130" height="52" class="head"/><text x="1565" y="112" text-anchor="middle" class="label">dashboard</text>
+
+  <line x1="135" y1="132" x2="135" y2="910" class="line"/>
+  <line x1="335" y1="132" x2="335" y2="910" class="line"/>
+  <line x1="545" y1="132" x2="545" y2="910" class="line"/>
+  <line x1="785" y1="132" x2="785" y2="910" class="line"/>
+  <line x1="1015" y1="132" x2="1015" y2="910" class="line"/>
+  <line x1="1240" y1="132" x2="1240" y2="910" class="line"/>
+  <line x1="1420" y1="132" x2="1420" y2="910" class="line"/>
+  <line x1="1565" y1="132" x2="1565" y2="910" class="line"/>
+
+  <rect x="185" y="154" width="100" height="28" class="msg"/><text x="235" y="173" text-anchor="middle" class="small">workflow</text>
+  <path d="M 135 192 L 335 192" class="arrow"/>
+
+  <rect x="360" y="224" width="170" height="28" class="msg"/><text x="445" y="243" text-anchor="middle" class="small">run_default_workflow()</text>
+  <path d="M 335 262 L 545 262" class="arrow"/>
+
+  <rect x="565" y="294" width="220" height="28" class="msg"/><text x="675" y="313" text-anchor="middle" class="small">run_full_reporting_pipeline()</text>
+  <path d="M 545 332 L 785 332" class="arrow"/>
+
+  <rect x="805" y="364" width="260" height="28" class="msg"/><text x="935" y="383" text-anchor="middle" class="small">run_real_pipeline(previsao_nota)</text>
+  <path d="M 785 402 L 1015 402" class="arrow"/>
+
+  <rect x="1095" y="434" width="210" height="28" class="msg"/><text x="1200" y="453" text-anchor="middle" class="small">treino, validação e teste</text>
+  <path d="M 1015 472 L 1420 472" class="arrow"/>
+
+  <rect x="815" y="504" width="240" height="28" class="msg"/><text x="935" y="523" text-anchor="middle" class="small">run_real_pipeline(alerta_risco)</text>
+  <path d="M 785 542 L 1015 542" class="arrow"/>
+
+  <rect x="1095" y="574" width="210" height="28" class="msg"/><text x="1200" y="593" text-anchor="middle" class="small">treino, validação e teste</text>
+  <path d="M 1015 612 L 1420 612" class="arrow"/>
+
+  <rect x="895" y="654" width="190" height="28" class="msg"/><text x="990" y="673" text-anchor="middle" class="small">build_school_reports()</text>
+  <path d="M 785 692 L 1240 692" class="arrow"/>
+
+  <rect x="1260" y="724" width="170" height="28" class="msg"/><text x="1345" y="743" text-anchor="middle" class="small">gravar reports finais</text>
+  <path d="M 1240 762 L 1420 762" class="arrow"/>
+
+  <rect x="1445" y="804" width="170" height="28" class="msg"/><text x="1530" y="823" text-anchor="middle" class="small">dashboard consome saída</text>
+  <path d="M 1420 842 L 1565 842" class="arrow"/>
+</svg>

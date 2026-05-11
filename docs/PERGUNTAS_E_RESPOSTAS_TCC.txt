@@ -168,6 +168,12 @@ Para esta fase do projeto e para esta base, sim, eles sao escolhas muito adequad
 39I. Em que HistGradientBoosting e RandomForest sao melhores ou piores que seus concorrentes?
 Eles sao melhores neste contexto porque trabalham muito bem com dados tabulares, aceitam relacoes nao lineares e exigem menos estrutura sequencial perfeita do que uma LSTM. Tambem sao mais realistas para uma base escolar heterogenea do que modelos muito sensiveis a escala ou muito caros de ajustar. Por outro lado, podem ser piores que candidatos como CatBoost ou LightGBM em alguns cenarios tabulares, e nao oferecem uma explicabilidade tao direta quanto modelos lineares muito simples.
 
+39J. Por que usar uma classificacao de risco em vez de um simples if na nota prevista?
+Porque um simples if, como "se nota prevista < 6 entao risco", depende totalmente do acerto da regressao e herda diretamente seus erros. A classificacao aprende o problema de risco de forma propria, olhando para o conjunto de sinais do aluno, como historico recente, faltas, tendencia e contexto da disciplina, mesmo quando a nota prevista fica muito perto da fronteira. Assim, ela pode separar melhor casos que parecem parecidos numericamente, mas possuem perfis de risco diferentes.
+
+39K. Entao um if resolveria parte do problema?
+Sim, e por isso o projeto tambem compara baselines simples derivados das ultimas notas. Esses ifs funcionam como referencia honesta e ajudam a verificar se o classificador realmente agrega valor. A escolha por manter a classificacao separada foi feita porque, nos testes, ela oferece uma resposta mais especializada para triagem pedagogica do que apenas aplicar uma regra fixa sobre a nota prevista.
+
 7. SOBRE AS METRICAS
 
 40. O que e MAE?

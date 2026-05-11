@@ -72,6 +72,9 @@ Observação:
 
 ## Contrato publico das extrações
 
+Observação:
+- o `README.md` contém exemplos mínimos de cabeçalho, uma linha por CSV e um glossário resumido das colunas, apenas para orientar quem quiser montar uma réplica pública sem acesso ao banco institucional
+
 ### 1. Alunos
 
 Arquivo gerado:

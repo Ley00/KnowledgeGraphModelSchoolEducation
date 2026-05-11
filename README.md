@@ -50,11 +50,14 @@ Esses sinais são consolidados em relatórios operacionais para uso escolar.
   - documentação textual do TCC
 - `diagrama/`
   - diagramas da arquitetura e do fluxo
+- `crisp_dm/`
+  - notebooks demonstrativos organizados pelas fases do CRISP-DM para apresentacao academica
 
 ### Escopo atual
 
 - o repositório foi reduzido ao fluxo operacional atual do TCC
 - o código histórico fora desse fluxo foi descartado
+- o runtime atual não depende mais da pilha legada de grafos/PyTorch
 - `artifacts/` concentra as entradas e saídas locais necessárias para operação
 
 ## Estrutura resumida
@@ -68,6 +71,7 @@ Esses sinais são consolidados em relatórios operacionais para uso escolar.
 ├── artifacts/
 ├── main.py
 ├── dashboard_streamlit.py
+├── crisp_dm/
 ├── monografia/
 ├── docs/
 └── diagrama/
@@ -138,6 +142,125 @@ Esses arquivos são a interface de entrada da pipeline. Quem não tiver acesso a
 Em outras palavras:
 - o banco real é uma forma de alimentar o projeto
 - os CSVs canônicos são a forma mínima de reproduzir a pipeline pública
+
+Exemplos mínimos, apenas para entender o formato esperado de cada CSV:
+
+`aluno.csv`
+```csv
+IDUnidade,NomeUnidade,IDPeriodo,NomePeriodo,IDCurso,NomeCurso,IDSerie,NomeSerie,IDTurma,ApelidoTurma,IDMatricula,SituacaoMatricula,IDAluno,NomeAluno
+U1,Escola Exemplo,P2025,2025,C1,Ensino Médio,S1,1ª Série,T1,1ª Série A - Matutino,M1,Matriculado,A1,Aluno 00001
+```
+
+`media_nota_aluno.csv`
+```csv
+IDUnidade,NomeUnidade,IDPeriodo,NomePeriodo,IDCurso,NomeCurso,IDSerie,NomeSerie,IDTurma,ApelidoTurma,IDMatricula,SituacaoMatricula,IDAluno,NomeAluno,IDDisciplina,NomeDisciplina,IDEtapa,NomeEtapa,IDMedia,ValorMedia
+U1,Escola Exemplo,P2025,2025,C1,Ensino Médio,S1,1ª Série,T1,1ª Série A - Matutino,M1,Matriculado,A1,Aluno 00001,D1,Matemática,E1,1º BIMESTRE,MED1,7.5
+```
+
+`faltas_aluno.csv`
+```csv
+IDUnidade,NomeUnidade,IDPeriodo,NomePeriodo,IDCurso,NomeCurso,IDSerie,NomeSerie,IDTurma,ApelidoTurma,IDMatricula,SituacaoMatricula,IDAluno,NomeAluno,IDDisciplinaxSerie,IDDisciplina,NomeDisciplina,IDEtapaxSerie,IDEtapa,NomeEtapa,IDFalta,DataFalta
+U1,Escola Exemplo,P2025,2025,C1,Ensino Médio,S1,1ª Série,T1,1ª Série A - Matutino,M1,Matriculado,A1,Aluno 00001,DS1,D1,Matemática,ES1,E1,1º BIMESTRE,F1,2025-03-12
+```
+
+`pagamento_aluno.csv`
+```csv
+IDUnidade,NomeUnidade,IDPeriodo,NomePeriodo,IDCurso,NomeCurso,IDSerie,NomeSerie,IDTurma,ApelidoTurma,IDMatricula,SituacaoMatricula,IDAluno,NomeAluno,IDMovimento,IDMatriculaMovimento,ParcelaMovimento,DescricaoMovimento,DataAntecipadoMovimento,ValorAntecipadoMovimento,DataVencimentoMovimento,ValorMovimento,PagoMovimento,ValorPagoMovimento,EhMensalidadeMovimento,EhMatriculaMovimento
+U1,Escola Exemplo,P2025,2025,C1,Ensino Médio,S1,1ª Série,T1,1ª Série A - Matutino,M1,Matriculado,A1,Aluno 00001,MOV1,MM1,1,Mensalidade Março,2025-03-05,850.0,2025-03-05,850.0,True,850.0,True,False
+```
+
+`responsaveis_aluno.csv`
+```csv
+IDUnidade,NomeUnidade,IDPeriodo,NomePeriodo,IDCurso,NomeCurso,IDSerie,NomeSerie,IDTurma,ApelidoTurma,IDMatricula,SituacaoMatricula,IDAluno,NomeAluno,IDResponsavel,NomeResponsavel,TipoResponsavel
+U1,Escola Exemplo,P2025,2025,C1,Ensino Médio,S1,1ª Série,T1,1ª Série A - Matutino,M1,Matriculado,A1,Aluno 00001,R1,Responsável 00001,Mãe
+```
+
+`professor_disciplina.csv`
+```csv
+IDUnidade,NomeUnidade,IDPeriodo,NomePeriodo,IDCurso,NomeCurso,IDSerie,NomeSerie,IDTurma,ApelidoTurma,IDDisciplinaxFuncionario,IDFuncionario,NomeFuncionario,IDDisciplina,NomeDisciplina
+U1,Escola Exemplo,P2025,2025,C1,Ensino Médio,S1,1ª Série,T1,1ª Série A - Matutino,DF1,F1,Professor 00001,D1,Matemática
+```
+
+### Significado das colunas dos CSVs
+
+Colunas acadêmicas comuns, presentes em quase todos os arquivos:
+- `IDUnidade`: identificador interno da unidade escolar.
+- `NomeUnidade`: nome legível da unidade escolar.
+- `IDPeriodo`: identificador interno do período letivo.
+- `NomePeriodo`: ano ou nome do período letivo usado pela pipeline.
+- `IDCurso`: identificador interno do curso.
+- `NomeCurso`: nome do curso, como `Ensino Fundamental` ou `Ensino Médio`.
+- `IDSerie`: identificador interno da série.
+- `NomeSerie`: nome legível da série, como `6º Ano` ou `1ª Série`.
+- `IDTurma`: identificador interno da turma.
+- `ApelidoTurma`: nome ou apelido legível da turma.
+- `IDMatricula`: identificador interno da matrícula do aluno.
+- `SituacaoMatricula`: situação acadêmica da matrícula, como `Matriculado`.
+- `IDAluno`: identificador interno do aluno.
+- `NomeAluno`: nome do aluno, normalmente já anonimizado no fluxo público.
+
+Colunas específicas de `aluno.csv`:
+- `IDUnidadexTipoCurso`: identificador da relação entre unidade e tipo de curso.
+- `IDCursoxPeriodo`: identificador da relação entre curso e período letivo.
+- `DataMatricula`: data da matrícula do aluno.
+- `CodigoAluno`: código institucional do aluno.
+- `SexoAluno`: sexo cadastrado do aluno.
+- `DataNascimentoAluno`: data de nascimento do aluno.
+- `QuadraResidenciaAluno`: quadra do endereço residencial.
+- `LoteResidenciaAluno`: lote do endereço residencial.
+- `NumeroResidenciaAluno`: número do imóvel residencial.
+- `ComplementoResidenciaAluno`: complemento do endereço residencial.
+- `BairroResidenciaAluno`: bairro do endereço residencial.
+- `CEPResidenciaAluno`: CEP do endereço residencial.
+
+Colunas específicas de `media_nota_aluno.csv`:
+- `IDDisciplina`: identificador interno da disciplina.
+- `NomeDisciplina`: nome legível da disciplina.
+- `IDEtapa`: identificador interno da etapa avaliativa.
+- `NomeEtapa`: nome da etapa, como `1º BIMESTRE`.
+- `IDMedia`: identificador interno do registro de média.
+- `ValorMedia`: nota ou média do aluno naquela disciplina e etapa.
+
+Colunas específicas de `faltas_aluno.csv`:
+- `IDDisciplinaxSerie`: identificador da relação entre disciplina e série.
+- `IDEtapaxSerie`: identificador da relação entre etapa e série.
+- `IDFalta`: identificador interno do evento de falta.
+- `DataFalta`: data em que a falta ocorreu.
+
+Colunas específicas de `pagamento_aluno.csv`:
+- `IDMovimento`: identificador interno do movimento financeiro.
+- `IDMatriculaMovimento`: identificador da matrícula associada ao movimento.
+- `ParcelaMovimento`: número ou referência da parcela.
+- `DescricaoMovimento`: descrição legível da cobrança ou item financeiro.
+- `DataAntecipadoMovimento`: data em que o pagamento ocorreu ou foi antecipado.
+- `ValorAntecipadoMovimento`: valor antecipado pago, quando existir.
+- `DataVencimentoMovimento`: data de vencimento da cobrança.
+- `ValorMovimento`: valor original da cobrança.
+- `PagoMovimento`: indica se a cobrança foi paga.
+- `ValorPagoMovimento`: valor efetivamente pago.
+- `EhMensalidadeMovimento`: indica se o movimento é mensalidade.
+- `EhMatriculaMovimento`: indica se o movimento é taxa de matrícula.
+
+Colunas específicas de `responsaveis_aluno.csv`:
+- `IDResponsavel`: identificador interno do responsável.
+- `TipoResponsavel`: tipo do vínculo, como `Mãe`, `Pai` ou outro responsável.
+- `NomeResponsavel`: nome do responsável, normalmente anonimizado no fluxo público.
+- `SexoResponsavel`: sexo cadastrado do responsável.
+- `DataNascimentoResponsavel`: data de nascimento do responsável.
+- `LogradouroResidenciaResponsavel`: logradouro do endereço residencial do responsável.
+- `QuadraResidenciaResponsavel`: quadra do endereço residencial do responsável.
+- `LoteResidenciaResponsavel`: lote do endereço residencial do responsável.
+- `NumeroResidenciaResponsavel`: número do imóvel residencial do responsável.
+- `ComplementoResidenciaResponsavel`: complemento do endereço residencial do responsável.
+- `BairroResidenciaResponsavel`: bairro do endereço residencial do responsável.
+- `CEPResidenciaResponsavel`: CEP do endereço residencial do responsável.
+
+Colunas específicas de `professor_disciplina.csv`:
+- `IDDisciplinaxFuncionario`: identificador interno do vínculo entre disciplina e professor.
+- `IDFuncionario`: identificador interno do professor ou funcionário.
+- `NomeFuncionario`: nome do professor ou funcionário, normalmente anonimizado no fluxo público.
+- `IDDisciplina`: identificador interno da disciplina vinculada ao professor.
+- `NomeDisciplina`: nome da disciplina vinculada ao professor.
 
 ### 1. Criar o `.env`
 
@@ -409,8 +532,10 @@ Este projeto lida com dados escolares sensíveis. Por isso:
 - `docs/PERGUNTAS_E_RESPOSTAS_TCC.txt`
 - `docs/REGRA_MINIMA_HISTORICO_AVALIACAO.txt`
 - `docs/TCC_MONOGRAFIA.md`
-- `diagrama/fluxo_simples_modelagem.md`
-- `diagrama/fluxo_detalhado.md`
+- `diagrama/fluxo.md`
+- `diagrama/arquitetural.md`
+- `diagrama/casos_de_uso.md`
+- `diagrama/sequencia_operacional.md`
 
 ## Licença
 

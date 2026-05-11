@@ -4,22 +4,8 @@ import pickle
 import pandas
 
 
-def _load_networkx():
-    """Import networkx only when graph serialization is actually requested."""
-    import networkx
-
-    return networkx
-
-
-def _load_torch():
-    """Import torch lazily so the current tabular pipeline does not depend on it."""
-    import torch
-
-    return torch
-
-
 def savearchivestudent(filename, data):
-    """Salva dados em diferentes formatos preservando compatibilidade histórica."""
+    """Salva dados nos formatos usados pela pipeline tabular atual."""
     try:
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
@@ -51,17 +37,6 @@ def savearchivestudent(filename, data):
             with open(file_path, 'wb') as f:
                 pickle.dump(data, f)
 
-        elif ext == 'graphml':
-            networkx = _load_networkx()
-            if isinstance(data, networkx.Graph):
-                networkx.write_graphml(data, file_path)
-            else:
-                raise TypeError(f"Esperado networkx.Graph para GraphML, recebido {type(data)}.")
-
-        elif ext in ['pt', 'pth']:
-            torch = _load_torch()
-            torch.save(data, file_path)
-
         else:
             raise ValueError(f"Formato de arquivo não suportado: '{ext}'")
 
@@ -70,7 +45,7 @@ def savearchivestudent(filename, data):
         raise
 
 def filereader(filename):
-    """Lê arquivos usados pelo projeto atual e pelos experimentos históricos."""
+    """Lê arquivos usados pela pipeline tabular atual."""
     file_path = os.path.join(filename)
     
     try:
@@ -90,24 +65,12 @@ def filereader(filename):
             with open(file_path, 'rb') as f:
                 return pickle.load(f)
 
-        elif ext == 'graphml':
-            networkx = _load_networkx()
-            return networkx.read_graphml(file_path)
-
-        elif ext == 'pt':
-            torch = _load_torch()
-            return torch.load(file_path)
-
         else:
             raise ValueError(f"Formato de arquivo não suportado: {ext}")
 
     except Exception as e:
         print(f"Erro ao ler '{filename}': {e}")
         return None
-
-    except Exception as e:
-        print(f"Error writing file: {e}")
-        raise
 
 def filedelete(filenames):
     """Remove um ou mais arquivos locais se eles existirem."""

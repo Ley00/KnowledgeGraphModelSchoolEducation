@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <style>
+    .title { font: 700 28px Arial, sans-serif; fill: #111827; }
+    .actor { font: 600 15px Arial, sans-serif; fill: #111827; }
+    .label { font: 600 15px Arial, sans-serif; fill: #111827; }
+    .small { font: 500 13px Arial, sans-serif; fill: #374151; }
+    .system { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; rx: 18; }
+    .ellipse { fill: #f8fafc; stroke: #1f2937; stroke-width: 2; }
+    .line { stroke: #475569; stroke-width: 2; fill: none; }
+  </style>
+  <text x="700" y="38" text-anchor="middle" class="title">Casos de Uso</text>
+
+  <rect x="260" y="90" width="880" height="700" class="system"/>
+  <text x="700" y="125" text-anchor="middle" class="label">Sistema preditivo escolar</text>
+
+  <g transform="translate(70,180)">
+    <circle cx="30" cy="20" r="16" stroke="#111827" stroke-width="2" fill="none"/>
+    <line x1="30" y1="36" x2="30" y2="86" class="line"/>
+    <line x1="0" y1="52" x2="60" y2="52" class="line"/>
+    <line x1="30" y1="86" x2="5" y2="120" class="line"/>
+    <line x1="30" y1="86" x2="55" y2="120" class="line"/>
+    <text x="30" y="145" text-anchor="middle" class="actor">Operador de dados</text>
+  </g>
+
+  <g transform="translate(70,430)">
+    <circle cx="30" cy="20" r="16" stroke="#111827" stroke-width="2" fill="none"/>
+    <line x1="30" y1="36" x2="30" y2="86" class="line"/>
+    <line x1="0" y1="52" x2="60" y2="52" class="line"/>
+    <line x1="30" y1="86" x2="5" y2="120" class="line"/>
+    <line x1="30" y1="86" x2="55" y2="120" class="line"/>
+    <text x="30" y="145" text-anchor="middle" class="actor">Pesquisador</text>
+  </g>
+
+  <g transform="translate(1230,170)">
+    <circle cx="30" cy="20" r="16" stroke="#111827" stroke-width="2" fill="none"/>
+    <line x1="30" y1="36" x2="30" y2="86" class="line"/>
+    <line x1="0" y1="52" x2="60" y2="52" class="line"/>
+    <line x1="30" y1="86" x2="5" y2="120" class="line"/>
+    <line x1="30" y1="86" x2="55" y2="120" class="line"/>
+    <text x="30" y="145" text-anchor="middle" class="actor">Professor</text>
+  </g>
+
+  <g transform="translate(1230,390)">
+    <circle cx="30" cy="20" r="16" stroke="#111827" stroke-width="2" fill="none"/>
+    <line x1="30" y1="36" x2="30" y2="86" class="line"/>
+    <line x1="0" y1="52" x2="60" y2="52" class="line"/>
+    <line x1="30" y1="86" x2="5" y2="120" class="line"/>
+    <line x1="30" y1="86" x2="55" y2="120" class="line"/>
+    <text x="30" y="145" text-anchor="middle" class="actor">Coordenação</text>
+  </g>
+
+  <g transform="translate(1230,610)">
+    <circle cx="30" cy="20" r="16" stroke="#111827" stroke-width="2" fill="none"/>
+    <line x1="30" y1="36" x2="30" y2="86" class="line"/>
+    <line x1="0" y1="52" x2="60" y2="52" class="line"/>
+    <line x1="30" y1="86" x2="5" y2="120" class="line"/>
+    <line x1="30" y1="86" x2="55" y2="120" class="line"/>
+    <text x="30" y="145" text-anchor="middle" class="actor">Secretaria</text>
+  </g>
+
+  <ellipse cx="470" cy="220" rx="150" ry="36" class="ellipse"/>
+  <text x="470" y="225" text-anchor="middle" class="label">Preparar banco restaurado</text>
+
+  <ellipse cx="470" cy="320" rx="150" ry="36" class="ellipse"/>
+  <text x="470" y="325" text-anchor="middle" class="label">Extrair dados para CSV</text>
+
+  <ellipse cx="700" cy="450" rx="150" ry="36" class="ellipse"/>
+  <text x="700" y="455" text-anchor="middle" class="label">Rodar pipeline preditiva</text>
+
+  <ellipse cx="700" cy="560" rx="170" ry="36" class="ellipse"/>
+  <text x="700" y="565" text-anchor="middle" class="label">Comparar cenários de histórico</text>
+
+  <ellipse cx="930" cy="300" rx="170" ry="36" class="ellipse"/>
+  <text x="930" y="305" text-anchor="middle" class="label">Gerar relatórios escolares</text>
+
+  <ellipse cx="930" cy="430" rx="150" ry="36" class="ellipse"/>
+  <text x="930" y="435" text-anchor="middle" class="label">Consultar dashboard</text>
+
+  <ellipse cx="930" cy="560" rx="150" ry="36" class="ellipse"/>
+  <text x="930" y="565" text-anchor="middle" class="label">Acompanhar alunos em risco</text>
+
+  <line x1="130" y1="232" x2="320" y2="220" class="line"/>
+  <line x1="130" y1="482" x2="550" y2="450" class="line"/>
+  <line x1="130" y1="482" x2="530" y2="560" class="line"/>
+  <line x1="130" y1="232" x2="320" y2="320" class="line"/>
+  <line x1="620" y1="220" x2="760" y2="300" class="line"/>
+  <line x1="620" y1="320" x2="550" y2="450" class="line"/>
+  <line x1="850" y1="450" x2="780" y2="430" class="line"/>
+  <line x1="1080" y1="300" x2="1230" y2="232" class="line"/>
+  <line x1="1080" y1="430" x2="1230" y2="452" class="line"/>
+  <line x1="1080" y1="560" x2="1230" y2="672" class="line"/>
+  <line x1="1080" y1="430" x2="1230" y2="672" class="line"/>
+</svg>
