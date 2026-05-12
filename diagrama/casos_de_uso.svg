@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
   <style>
-    .title { font: 700 28px Arial, sans-serif; fill: #111827; }
+    .title { font: 700 28px Arial, sans-serif; fill: #ffffff; }
     .actor { font: 600 15px Arial, sans-serif; fill: #111827; }
+    .actor-frame { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 14; opacity: 0.98; }
     .label { font: 600 15px Arial, sans-serif; fill: #111827; }
     .small { font: 500 13px Arial, sans-serif; fill: #374151; }
     .system { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; rx: 18; }
@@ -14,6 +15,7 @@
   <text x="700" y="125" text-anchor="middle" class="label">Sistema preditivo escolar</text>
 
   <g transform="translate(70,180)">
+    <rect x="-22" y="-12" width="104" height="176" class="actor-frame"/>
     <circle cx="30" cy="20" r="16" stroke="#111827" stroke-width="2" fill="none"/>
     <line x1="30" y1="36" x2="30" y2="86" class="line"/>
     <line x1="0" y1="52" x2="60" y2="52" class="line"/>
@@ -23,6 +25,7 @@
   </g>
 
   <g transform="translate(70,430)">
+    <rect x="-22" y="-12" width="104" height="176" class="actor-frame"/>
     <circle cx="30" cy="20" r="16" stroke="#111827" stroke-width="2" fill="none"/>
     <line x1="30" y1="36" x2="30" y2="86" class="line"/>
     <line x1="0" y1="52" x2="60" y2="52" class="line"/>
@@ -32,6 +35,7 @@
   </g>
 
   <g transform="translate(1230,170)">
+    <rect x="-22" y="-12" width="104" height="176" class="actor-frame"/>
     <circle cx="30" cy="20" r="16" stroke="#111827" stroke-width="2" fill="none"/>
     <line x1="30" y1="36" x2="30" y2="86" class="line"/>
     <line x1="0" y1="52" x2="60" y2="52" class="line"/>
@@ -41,6 +45,7 @@
   </g>
 
   <g transform="translate(1230,390)">
+    <rect x="-22" y="-12" width="104" height="176" class="actor-frame"/>
     <circle cx="30" cy="20" r="16" stroke="#111827" stroke-width="2" fill="none"/>
     <line x1="30" y1="36" x2="30" y2="86" class="line"/>
     <line x1="0" y1="52" x2="60" y2="52" class="line"/>
@@ -50,6 +55,7 @@
   </g>
 
   <g transform="translate(1230,610)">
+    <rect x="-22" y="-12" width="104" height="176" class="actor-frame"/>
     <circle cx="30" cy="20" r="16" stroke="#111827" stroke-width="2" fill="none"/>
     <line x1="30" y1="36" x2="30" y2="86" class="line"/>
     <line x1="0" y1="52" x2="60" y2="52" class="line"/>

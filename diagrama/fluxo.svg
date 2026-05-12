@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1100" viewBox="0 0 1280 1100">
   <style>
-    .title { font: 700 28px Arial, sans-serif; fill: #111827; }
+    .title { font: 700 28px Arial, sans-serif; fill: #ffffff; }
     .label { font: 600 15px Arial, sans-serif; fill: #111827; }
     .small { font: 500 13px Arial, sans-serif; fill: #374151; }
     .box { fill: #f8fafc; stroke: #1f2937; stroke-width: 2; rx: 14; }
