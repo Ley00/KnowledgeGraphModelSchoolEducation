@@ -21,6 +21,33 @@ Em termos de organiza\c{c}\~ao do c\'odigo, o n\'ucleo da solu\c{c}\~ao ficou di
 
 Na vers\~ao final do reposit\'orio, essa organiza\c{c}\~ao foi consolidada no pacote \texttt{school\_predictor/}, com artefatos locais centralizados em \texttt{artifacts/}. Essa separa\c{c}\~ao tornou a arquitetura mais simples de compreender e mais segura para publica\c{c}\~ao do c\'odigo.
 
+\begin{figure}[ht]
+\caption{Vis\~ao arquitetural da solu\c{c}\~ao proposta.}
+\label{fig:arquitetura-solucao}
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[
+    bloco/.style={draw, rounded corners, align=center, minimum width=3.2cm, minimum height=1.0cm, fill=white},
+    camada/.style={draw, rounded corners, align=center, minimum width=14.2cm, minimum height=1.2cm, fill=gray!8},
+    seta/.style={->, thick}
+]
+    \node[camada] (privada) at (0, 3.2) {Camada privada local\\prepara\c{c}\~ao do banco, anonimiza\c{c}\~ao e consultas SQL reais fora do Git};
+    \node[bloco] (csv) at (-5.0, 1.2) {Arquivos CSV\\can\^onicos};
+    \node[bloco] (dataset) at (-1.7, 1.2) {Dataset\\longitudinal};
+    \node[bloco] (modelagem) at (1.7, 1.2) {Modelagem\\temporal};
+    \node[bloco] (relatorios) at (5.0, 1.2) {Relat\'orios e\\dashboard};
+    \node[camada] (publica) at (0, -0.7) {Camada p\'ublica reproduz\'ivel\\\texttt{school\_predictor/}, \texttt{artifacts/database/csv/}, \texttt{artifacts/pipeline/} e \texttt{artifacts/reports/}};
+
+    \draw[seta] (privada) -- (csv);
+    \draw[seta] (csv) -- (dataset);
+    \draw[seta] (dataset) -- (modelagem);
+    \draw[seta] (modelagem) -- (relatorios);
+    \draw[seta] (csv) -- (publica);
+    \draw[seta] (relatorios) -- (publica);
+\end{tikzpicture}}
+\fontefig{Elaborada pelo autor.}
+\end{figure}
+
 \section{Modos de execu\c{c}\~ao}
 \label{sec:modos}
 
@@ -32,6 +59,37 @@ A pipeline foi dividida em dois modos complementares:
 \end{itemize}
 
 Essa divis\~ao surgiu dos experimentos: o mesmo recorte de hist\'orico n\~ao era o melhor para os dois objetivos. Assim, a arquitetura passou a preservar duas configura\c{c}\~oes operacionais, cada uma adequada ao seu uso principal.
+
+Em ambos os modos, a fun\c{c}\~ao central de modelagem calcula sinais de regress\~ao e de classifica\c{c}\~ao. A diferen\c{c}a est\'a no objetivo operacional, no hist\'orico m\'inimo exigido, no volume de dados resultante e no artefato usado como refer\^encia principal. No modo \texttt{previsao\_nota}, a interpreta\c{c}\~ao principal \'e o erro da nota prevista; no modo \texttt{alerta\_risco}, a interpreta\c{c}\~ao principal \'e a capacidade de recuperar alunos cuja pr\'oxima nota ficou abaixo da linha de seguran\c{c}a.
+
+\begin{figure}[ht]
+\caption{Fluxo operacional da pipeline de modelagem.}
+\label{fig:fluxo-pipeline}
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[
+    passo/.style={draw, rounded corners, align=center, minimum width=2.8cm, minimum height=1.0cm, fill=white},
+    saida/.style={draw, rounded corners, align=center, minimum width=3.0cm, minimum height=1.0cm, fill=gray!10},
+    seta/.style={->, thick}
+]
+    \node[passo] (csv) at (0, 2.0) {CSV\\tratados};
+    \node[passo] (atributos) at (3.3, 2.0) {Engenharia\\de atributos};
+    \node[passo] (split) at (6.6, 2.0) {Split\\temporal};
+    \node[passo] (candidatos) at (9.9, 2.0) {Modelos e\\baselines};
+    \node[saida] (nota) at (3.3, 0.0) {Previs\~ao\\da pr\'oxima nota};
+    \node[saida] (risco) at (6.6, 0.0) {Alerta de\\risco};
+    \node[saida] (acao) at (9.9, 0.0) {Relat\'orios\\por perfil};
+
+    \draw[seta] (csv) -- (atributos);
+    \draw[seta] (atributos) -- (split);
+    \draw[seta] (split) -- (candidatos);
+    \draw[seta] (candidatos) -- (nota);
+    \draw[seta] (candidatos) -- (risco);
+    \draw[seta] (nota) -- (acao);
+    \draw[seta] (risco) -- (acao);
+\end{tikzpicture}}
+\fontefig{Elaborada pelo autor.}
+\end{figure}
 
 \section{Integra\c{c}\~ao de notas, faltas, pagamentos e professores}
 \label{sec:integracao}

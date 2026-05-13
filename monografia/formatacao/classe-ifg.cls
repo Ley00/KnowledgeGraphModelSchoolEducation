@@ -1637,8 +1637,8 @@
      \vspace*{\stretch{1}}
      \par
      \ifthenelse{\equal{\@orientador}{}}
-      {\membra{\@orientadora}{\@unidade\\Presidente da Banca}}
-      {\membro{\@orientador}{\@unidade\\Presidente da Banca}}
+      {\membra{\@orientadora}{\@unidade\\Orientadora}}
+      {\membro{\@orientador}{\@unidade\\Orientador}}
    \ifthenelse{\equal{\@pcoorientador}{}}{
   	% Sem primeiro coorientador: 0XXX
   	\ifthenelse{\equal{\@pcoorientadora}{}}{
@@ -2017,9 +2017,9 @@
     \textbf{Autores:} \@autor,~\@sautor~e~\@tautor\\
  }
 \ifthenelse{\equal{\@orientador}{}}{
-	\textbf{Orientadora:} \@orientadora\\
+	\textbf{Orientadora:} Profa. \@orientadora\\
 }{
-	\textbf{Orientador:} \@orientador\\
+	\textbf{Orientador:} Prof. \@orientador\\
 }
 \ifthenelse{\equal{\@pcoorientador}{}}{
   	% Sem primeiro coorientador: 0XXX
@@ -2170,9 +2170,9 @@
     \textbf{Authors:} \@autor,~\@sautor,~and~\@tautor\\
  }
 \ifthenelse{\equal{\@orientador}{}}{
-	\textbf{Advisor:} \@orientadora\\
+	\textbf{Advisor:} Profa. \@orientadora\\
 }{
-	\textbf{Advisor:} \@orientador\\
+	\textbf{Advisor:} Prof. \@orientador\\
 }
 \ifthenelse{\equal{\@pcoorientador}{}}{
   	% Sem primeiro coorientador: 0XXX

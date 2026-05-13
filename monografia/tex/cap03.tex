@@ -9,7 +9,7 @@ Esta pesquisa \'e aplicada, predominantemente quantitativa e com forte component
 \section{Fonte de dados e preparo inicial}
 \label{sec:fonte-dados}
 
-Os dados utilizados s\~ao provenientes de uma base escolar real contendo registros de alunos, notas, faltas, pagamentos e informa\c{c}\~oes acad\^emicas e administrativas. A base foi atualizada at\'e abril de 2026 e passou por um processo de manuten\c{c}\~ao para uso acad\^emico. Esse fluxo incluiu renomea\c{c}\~ao da base, redu\c{c}\~ao estrutural, reorganiza\c{c}\~ao de \'indices, atualiza\c{c}\~ao de estat\'isticas e anonimiza\c{c}\~ao dos registros sens\'iveis.
+Os dados utilizados s\~ao provenientes de uma base escolar real contendo registros de alunos, notas, faltas, pagamentos e informa\c{c}\~oes acad\^emicas e administrativas. A base institucional foi renovada com registros de 2026 e passou por um processo de manuten\c{c}\~ao para uso acad\^emico. Esse fluxo incluiu renomea\c{c}\~ao da base, redu\c{c}\~ao estrutural, reorganiza\c{c}\~ao de \'indices, atualiza\c{c}\~ao de estat\'isticas e anonimiza\c{c}\~ao dos registros sens\'iveis. Como a avalia\c{c}\~ao temporal depende de conhecer a pr\'oxima nota observada, os experimentos finais utilizaram 2025 como ano de teste consolidado; dados de 2026 permanecem relevantes para continuidade operacional, mas nem sempre possuem alvo futuro completo para avalia\c{c}\~ao experimental.
 
 Os arquivos principais extra\'idos para a pipeline foram:
 
@@ -26,6 +26,8 @@ Os arquivos principais extra\'idos para a pipeline foram:
 \label{sec:estrategia}
 
 O trabalho foi conduzido de forma incremental. Em vez de partir diretamente para uma solu\c{c}\~ao final, o projeto foi sendo refinado em ciclos de explora\c{c}\~ao, teste, diagn\'ostico de limita\c{c}\~oes e refatora\c{c}\~ao. Esse percurso n\~ao foi um desvio do objetivo do TCC; ao contr\'ario, ele mostrou quais escolhas se sustentavam diante do problema real.
+
+Para organizar a apresenta\c{c}\~ao desse percurso, tamb\'em foi adotada uma leitura inspirada no ciclo \sigla{CRISP-DM}{Cross-Industry Standard Process for Data Mining} \cite{wirth2000}. Assim, o projeto pode ser compreendido em seis movimentos: entendimento do problema escolar, entendimento dos dados, prepara\c{c}\~ao da base, modelagem, avalia\c{c}\~ao e disponibiliza\c{c}\~ao dos resultados em relat\'orios e painel. Essa estrutura foi usada como material demonstrativo nos notebooks do reposit\'orio, sem substituir a arquitetura de produ\c{c}\~ao da aplica\c{c}\~ao.
 
 \section{Evolu\c{c}\~ao hist\'orica do projeto}
 \label{sec:evolucao}
